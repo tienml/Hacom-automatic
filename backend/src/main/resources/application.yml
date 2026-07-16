@@ -1,0 +1,35 @@
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: hacom-bbnt-automation
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  mvc:
+    async:
+      request-timeout: 180s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+app:
+  cors:
+    allowed-origins: ${APP_ALLOWED_ORIGINS:http://localhost:5173}
+  storage:
+    root: ${APP_STORAGE_ROOT:${java.io.tmpdir}/hacom-bbnt-v1}
+    ttl-minutes: ${APP_STORAGE_TTL_MINUTES:60}
+    cleanup-delay-ms: ${APP_STORAGE_CLEANUP_DELAY_MS:600000}
+  pdf:
+    # auto: thử Gotenberg trước, sau đó thử LibreOffice cài trên máy.
+    # gotenberg | libreoffice | disabled cũng được hỗ trợ.
+    mode: ${PDF_MODE:auto}
+    timeout-seconds: ${PDF_TIMEOUT_SECONDS:120}
+    gotenberg-base-url: ${GOTENBERG_BASE_URL:http://localhost:3000}
+    libreoffice-command: ${LIBREOFFICE_COMMAND:soffice}

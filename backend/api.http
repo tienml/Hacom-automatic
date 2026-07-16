@@ -1,0 +1,36 @@
+@baseUrl = http://localhost:8080
+@jobId = replace-after-analyze
+@documentId = replace-after-generate
+
+### System status
+GET {{baseUrl}}/api/v1/system/status
+
+### Analyze workbook
+POST {{baseUrl}}/api/v1/jobs/analyze
+Content-Type: multipart/form-data; boundary=HaComBoundary
+
+--HaComBoundary
+Content-Disposition: form-data; name="file"; filename="BBNT.xls"
+Content-Type: application/vnd.ms-excel
+
+< ../../BBNT.xls
+--HaComBoundary--
+
+### Outputs for DM 111
+GET {{baseUrl}}/api/v1/jobs/{{jobId}}/work-items/111/outputs
+
+### Generate
+POST {{baseUrl}}/api/v1/jobs/{{jobId}}/generate
+Content-Type: application/json
+
+{
+  "workItemNumber": 111,
+  "selectedSheets": ["111", "1.LMV (111)", "1.GMV (111)"],
+  "createPdf": true
+}
+
+### Excel
+GET {{baseUrl}}/api/v1/documents/{{documentId}}/excel
+
+### PDF preview
+GET {{baseUrl}}/api/v1/documents/{{documentId}}/pdf?disposition=inline
