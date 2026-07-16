@@ -19,5 +19,9 @@
     "@vitejs/plugin-react": "^6.0.3",
     "typescript": "^7.0.2",
     "vite": "^8.1.5"
-  }
+  },
+  "engines": {
+    "node": ">=20.19.0 <23.0.0"
+  },
+  "packageManager": "npm@10.9.2"
 }
