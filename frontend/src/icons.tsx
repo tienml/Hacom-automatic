@@ -45,3 +45,9 @@ export const PrinterIcon = (props: IconProps) => <IconBase {...props}><path d="M
 export const RefreshIcon = (props: IconProps) => <IconBase {...props}><path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M6.1 9A7 7 0 0 1 18 6l2 5M4 13l2 5a7 7 0 0 0 11.9-3"/></IconBase>
 export const AlertIcon = (props: IconProps) => <IconBase {...props}><path d="M12 3 2 21h20z"/><path d="M12 9v5M12 18h.01"/></IconBase>
 export const InfoIcon = (props: IconProps) => <IconBase {...props}><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></IconBase>
+export const HeadphonesIcon = (props: IconProps) => <IconBase {...props}><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><path d="M18 19h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-2v7h1ZM6 19H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h2v7H6Z"/><path d="M18 19c0 1.1-.9 2-2 2h-3"/></IconBase>
+export const CalendarIcon = (props: IconProps) => <IconBase {...props}><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></IconBase>
+export const LockIcon = (props: IconProps) => <IconBase {...props}><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></IconBase>
+export const EyeIcon = (props: IconProps) => <IconBase {...props}><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></IconBase>
+export const TrashIcon = (props: IconProps) => <IconBase {...props}><path d="M4 7h16M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3"/></IconBase>
+export const LightbulbIcon = (props: IconProps) => <IconBase {...props}><path d="M9 18h6M10 22h4"/><path d="M8.5 15.5A6 6 0 1 1 15.5 15.5c-.9.7-1.5 1.5-1.5 2.5h-4c0-1-.6-1.8-1.5-2.5Z"/></IconBase>

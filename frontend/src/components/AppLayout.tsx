@@ -2,31 +2,27 @@ import type { ReactNode } from 'react'
 import type { PageKey, SystemStatus } from '../types'
 import {
   BellIcon,
-  ClockIcon,
+  CheckIcon,
   DownloadIcon,
   FileIcon,
+  HeadphonesIcon,
   HelpIcon,
-  SettingsIcon,
   TemplateIcon,
   UploadIcon,
 } from '../icons'
 
-type NavItem = {
-  key: PageKey | 'history' | 'settings'
-  label: string
+type StepItem = {
+  key: PageKey
+  title: string
+  description: string
   icon: ReactNode
 }
 
-const primaryNav: NavItem[] = [
-  { key: 'upload', label: 'Tải file BBNT', icon: <UploadIcon /> },
-  { key: 'work-items', label: 'Danh mục công việc', icon: <FileIcon /> },
-  { key: 'templates', label: 'Chọn biểu mẫu', icon: <TemplateIcon /> },
-  { key: 'preview', label: 'Xem trước & Xuất', icon: <DownloadIcon /> },
-]
-
-const secondaryNav: NavItem[] = [
-  { key: 'history', label: 'Lịch sử xử lý', icon: <ClockIcon /> },
-  { key: 'settings', label: 'Cài đặt', icon: <SettingsIcon /> },
+const steps: StepItem[] = [
+  { key: 'upload', title: 'Tải file BBNT', description: 'Nhập dữ liệu từ file Excel', icon: <UploadIcon size={21} /> },
+  { key: 'work-items', title: 'Danh mục công việc', description: 'Danh sách nội dung công việc', icon: <FileIcon size={21} /> },
+  { key: 'templates', title: 'Chọn biểu mẫu', description: 'Chọn mẫu biểu phù hợp', icon: <TemplateIcon size={21} /> },
+  { key: 'preview', title: 'Xem trước & Xuất', description: 'Xem trước và xuất biểu mẫu', icon: <DownloadIcon size={21} /> },
 ]
 
 export function AppLayout({
@@ -42,6 +38,8 @@ export function AppLayout({
   children: ReactNode
   status: SystemStatus | null
 }) {
+  const activeIndex = steps.findIndex((step) => step.key === page)
+
   return (
     <div className="app-layout">
       <aside className="sidebar">
@@ -49,46 +47,47 @@ export function AppLayout({
           <img src="/hacom-logo-horizontal.png" alt="HaCom Holdings" />
         </div>
 
-        <nav className="sidebar-nav" aria-label="Điều hướng chính">
-          {primaryNav.map((item) => {
-            const enabled = canNavigate(item.key as PageKey)
+        <nav className="workflow-nav" aria-label="Các bước xử lý hồ sơ">
+          {steps.map((step, index) => {
+            const active = step.key === page
+            const completed = index < activeIndex
+            const enabled = canNavigate(step.key)
             return (
-              <button
-                type="button"
-                key={item.key}
-                className={`nav-item ${page === item.key ? 'active' : ''}`}
-                disabled={!enabled}
-                onClick={() => enabled && onNavigate(item.key as PageKey)}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
+              <div className="workflow-step-wrap" key={step.key}>
+                <button
+                  type="button"
+                  className={`workflow-step ${active ? 'active' : ''} ${completed ? 'completed' : ''}`}
+                  disabled={!enabled}
+                  onClick={() => enabled && onNavigate(step.key)}
+                >
+                  <span className="step-marker">
+                    {completed ? <CheckIcon size={18} /> : <span>{index + 1}</span>}
+                  </span>
+                  <span className="step-icon">{step.icon}</span>
+                  <span className="step-copy">
+                    <strong>{step.title}</strong>
+                    <small>{step.description}</small>
+                  </span>
+                </button>
+                {index < steps.length - 1 && <span className={`step-line ${completed ? 'completed' : ''}`} />}
+              </div>
             )
           })}
-
-          <div className="nav-divider" />
-
-          {secondaryNav.map((item) => (
-            <button type="button" key={item.key} className="nav-item nav-disabled" disabled>
-              <span className="nav-icon">{item.icon}</span>
-              <span>{item.label}</span>
-              <span className="v2-badge">V2</span>
-            </button>
-          ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <img src="/hacom-logo-vertical.png" alt="HaCom Holdings" />
-          <div className="footer-divider" />
-          <p>Phiên bản 1.0.0</p>
-          <small>Không đăng nhập · Không database</small>
+        <div className="sidebar-support">
+          <span className="support-icon"><HeadphonesIcon size={25} /></span>
+          <div>
+            <strong>Hỗ trợ</strong>
+            <p>Nếu cần hỗ trợ về file BBNT, vui lòng liên hệ đội dự án.</p>
+          </div>
+          <button type="button" onClick={() => window.alert('Vui lòng liên hệ quản trị viên dự án HaCom.')}>Liên hệ hỗ trợ</button>
         </div>
       </aside>
 
       <div className="content-column">
         <header className="topbar">
           <div className="product-title">
-            <span className="product-icon"><FileIcon size={20} /></span>
             <strong>HaCom BBNT Automation</strong>
             <span className="version-badge">V1.0</span>
           </div>
@@ -104,7 +103,7 @@ export function AppLayout({
               <span className="trial-avatar">KT</span>
               <div>
                 <strong>Khách hàng thử nghiệm</strong>
-                <span>{status?.pdfAvailable ? `PDF: ${status.activePdfEngine}` : 'PDF chưa sẵn sàng'}</span>
+                <span>{status?.pdfAvailable ? `PDF sẵn sàng · ${status.activePdfEngine}` : 'PDF chưa sẵn sàng'}</span>
               </div>
             </div>
           </div>
