@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AppLayout } from './components/AppLayout'
 import { analyzeWorkbook, absoluteApiUrl, generateDocument, getSystemStatus, loadOutputs } from './api'
 import { UploadPage } from './pages/UploadPage'
@@ -214,8 +214,20 @@ function App() {
 }
 
 function Toast({ type, message, onClose }: { type: 'error' | 'success'; message: string; onClose: () => void }) {
+  const autoCloseMs = type === 'error' ? 6000 : 4000
+  const onCloseRef = useRef(onClose)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => onCloseRef.current(), autoCloseMs)
+    return () => window.clearTimeout(timeoutId)
+  }, [autoCloseMs, message])
+
   return (
-    <div className={`toast ${type}`} role="status">
+    <div className={`toast ${type}`} role="status" aria-live="polite">
       <span className="toast-icon">{type === 'error' ? <AlertIcon size={19} /> : <CheckIcon size={19} />}</span>
       <span>{message}</span>
       <button type="button" onClick={onClose} aria-label="Đóng thông báo"><XIcon size={17} /></button>
