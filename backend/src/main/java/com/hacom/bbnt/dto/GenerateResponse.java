@@ -5,7 +5,7 @@ import java.util.List;
 
 public record GenerateResponse(
         String documentId,
-        int workItemNumber,
+        List<String> workItemNumbers,
         List<String> selectedSheets,
         String excelDownloadUrl,
         String pdfPreviewUrl,
@@ -16,6 +16,7 @@ public record GenerateResponse(
         String pdfFileName,
         long excelSize,
         long pdfSize,
+        List<String> warnings,
         Instant createdAt,
         Instant expiresAt
 ) {

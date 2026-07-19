@@ -1,44 +1,82 @@
-# Luồng chức năng Version 1
+# Luồng chức năng Safe Template V2
 
-## Luồng người dùng
-
-```text
-1. Mở trang Tải file BBNT
-2. Chọn hoặc kéo thả workbook .xls/.xlsx
-3. Bấm Phân tích file
-4. Xem kết quả: sheet DM, số công việc, số biểu mẫu, tên dự án
-5. Bấm Đọc danh mục công việc
-6. Tìm kiếm/lọc và chọn một số DM, ví dụ 111
-7. Bấm Tiếp tục chọn biểu mẫu
-8. Hệ thống tìm các sheet liên quan: 111, 1.LMV (111), 1.GMV (111)
-9. Người dùng giữ/bỏ chọn từng biểu mẫu
-10. Bấm Tạo Excel & Preview PDF
-11. Backend tạo Excel kết quả
-12. Backend tạo workbook in tạm, đóng băng công thức và xóa các sheet không chọn
-13. Gotenberg hoặc LibreOffice chuyển workbook in sang PDF
-14. Người dùng preview, tải Excel, tải PDF hoặc mở để in
-```
-
-## Luồng backend
+## Phân tích
 
 ```text
-Multipart upload
+multipart upload
 → validate extension/size
-→ save temporary source
-→ WorkbookFactory mở .xls/.xlsx
-→ tìm DM bằng trim + ignoreCase
-→ DataFormatter + FormulaEvaluator đọc A:G
-→ map số DM với tên sheet đầu ra
-→ lưu JobContext trong bộ nhớ
-
-Generate
-→ validate selectedSheets thuộc số DM
-→ copy workbook
-→ ghi P1 = số DM trên sheet đã chọn
-→ ẩn sheet không chọn cho Excel tải về
-→ tạo print workbook riêng
-→ evaluate/cached formula thành giá trị tĩnh
-→ xóa sheet không chọn
-→ convert PDF
-→ lưu kết quả tạm theo documentId
+→ copy source vào thư mục job
+→ mở qua InputStream (không ghi ngược file nguồn)
+→ tìm DM exact/trim/header detection
+→ detect column mapping và used data
+→ DataFormatter + FormulaEvaluator đọc displayed value
+→ parse sheet chính/LMV/GMV/LMBT/GMBT
+→ xây TemplateRegistry
+→ classify VUA/BETONG/UNKNOWN
+→ lập FieldDecision và warning
+→ lưu JobContext tạm
 ```
+
+## Chọn biểu mẫu
+
+```text
+EXISTING_SHEET
+→ chỉ cho chọn sheet thuộc đúng item
+
+CLONE_TEMPLATE
+→ resolve family
+→ UNKNOWN bắt buộc chọn VUA/BETONG
+→ resolve LM/GM template theo registry hoặc lựa chọn người dùng
+→ trả tên sheet dự kiến và source template
+```
+
+## Sinh Excel
+
+```text
+mở bản source qua InputStream
+→ xử lý từng selection
+   ├─ EXISTING_SHEET: giữ sheet và cập nhật reference P1 như luồng cũ
+   └─ CLONE_TEMPLATE:
+      clone
+      → đổi tên an toàn/không trùng
+      → khôi phục page setup/print area
+      → sanitize formula, error, người/tổ chức và thông số chưa chắc chắn
+      → populate CERTAIN fields
+      → validate toàn sheet
+→ hiển thị sheet được chọn, ẩn sheet phụ thuộc/template
+→ write output
+→ reopen bằng Apache POI để kiểm tra integrity
+```
+
+## Sinh PDF
+
+```text
+mở output Excel qua InputStream
+→ copy thành print workbook riêng
+→ flatten formula trên sheet được chọn
+→ xóa sheet không chọn khỏi print workbook
+→ LibreOffice/Gotenberg convert
+→ kiểm tra file PDF không rỗng
+```
+
+Bản Excel tải về và workbook upload không bị thay đổi bởi bước PDF.
+
+## Mô tả LM/GM
+
+```text
+normalized = trim(workContent)
+normalized = bỏ duy nhất tiền tố "Chất lượng" ở đầu, không phân biệt hoa thường
+LM = "Lấy mẫu " + normalized + optional(" (" + location + ")")
+GM = "Mẫu " + normalized + optional(" (" + location + ")")
+```
+
+## Số hồ sơ
+
+```text
+1503/CB/NTCV/159
+→ split theo "/"
+→ thay đúng segment NTCV bằng LM hoặc GM
+→ 1503/CB/LM/159 / 1503/CB/GM/159
+```
+
+Không nhận diện được cấu trúc thì để trống và trả warning; không thay theo index ký tự.

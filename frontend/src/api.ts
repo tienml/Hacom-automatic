@@ -1,6 +1,8 @@
 import type {
   AnalyzeResponse,
   GenerateResponse,
+  GenerateSelection,
+  MaterialFamily,
   OutputSheet,
   SystemStatus,
 } from './types'
@@ -9,44 +11,50 @@ export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localh
 
 async function readJson<T>(response: Response): Promise<T> {
   const body = await response.json().catch(() => null)
-  if (!response.ok) {
-    throw new Error(body?.message ?? `Yêu cầu thất bại (${response.status})`)
-  }
+  if (!response.ok) throw new Error(body?.message ?? `Yêu cầu thất bại (${response.status})`)
   return body as T
 }
 
 export async function getSystemStatus(): Promise<SystemStatus> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/system/status`)
-  return readJson<SystemStatus>(response)
+  return readJson<SystemStatus>(await fetch(`${API_BASE_URL}/api/v1/system/status`))
 }
 
 export async function analyzeWorkbook(file: File): Promise<AnalyzeResponse> {
   const form = new FormData()
   form.append('file', file)
-  const response = await fetch(`${API_BASE_URL}/api/v1/jobs/analyze`, {
+  return readJson<AnalyzeResponse>(await fetch(`${API_BASE_URL}/api/v1/jobs/analyze`, {
     method: 'POST',
     body: form,
-  })
-  return readJson<AnalyzeResponse>(response)
+  }))
 }
 
-export async function loadOutputs(jobId: string, number: number): Promise<OutputSheet[]> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/jobs/${jobId}/work-items/${number}/outputs`)
-  return readJson<OutputSheet[]>(response)
+export async function loadOutputs(
+  jobId: string,
+  itemNumber: string,
+  materialFamily?: MaterialFamily,
+  lmTemplateSheet?: string | null,
+  gmTemplateSheet?: string | null,
+): Promise<OutputSheet[]> {
+  const params = new URLSearchParams()
+  if (materialFamily && materialFamily !== 'UNKNOWN') params.set('materialFamily', materialFamily)
+  if (lmTemplateSheet) params.set('lmTemplateSheet', lmTemplateSheet)
+  if (gmTemplateSheet) params.set('gmTemplateSheet', gmTemplateSheet)
+  const query = params.size ? `?${params.toString()}` : ''
+  return readJson<OutputSheet[]>(await fetch(
+    `${API_BASE_URL}/api/v1/jobs/${jobId}/work-items/${encodeURIComponent(itemNumber)}/outputs${query}`,
+  ))
 }
 
 export async function generateDocument(
   jobId: string,
-  workItemNumber: number,
-  selectedSheets: string[],
+  selections: GenerateSelection[],
   createPdf = true,
 ): Promise<GenerateResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/jobs/${jobId}/generate`, {
+  return readJson<GenerateResponse>(await fetch(`${API_BASE_URL}/api/v1/jobs/${jobId}/generate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ workItemNumber, selectedSheets, createPdf }),
-  })
-  return readJson<GenerateResponse>(response)
+    body: JSON.stringify({ selections, createPdf }),
+  }))
 }
 
 export function absoluteApiUrl(path: string | null): string | null {

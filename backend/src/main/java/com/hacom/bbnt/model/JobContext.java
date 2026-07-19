@@ -14,9 +14,21 @@ public record JobContext(
         Path sourcePath,
         String dmSheetName,
         ProjectSummary project,
+        List<String> analysisWarnings,
         List<WorkItemDto> workItems,
-        Map<Integer, List<String>> outputSheets,
+        Map<String, List<String>> outputSheets,
+        TemplateRegistry templateRegistry,
         Instant createdAt,
         Instant expiresAt
 ) {
+    public JobContext {
+        analysisWarnings = analysisWarnings == null ? List.of() : List.copyOf(analysisWarnings);
+    }
+
+    public WorkItemDto workItem(String itemNumber) {
+        return workItems.stream()
+                .filter(item -> item.itemNumber().equalsIgnoreCase(itemNumber))
+                .findFirst()
+                .orElse(null);
+    }
 }

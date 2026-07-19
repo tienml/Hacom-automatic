@@ -1,0 +1,682 @@
+# Báo cáo kiểm chứng workbook BBNT
+
+> Báo cáo này được tạo trước khi triển khai `TemplateRegistry` và logic clone. Mục đích là xác minh workbook thực tế, không dùng địa chỉ ô suy đoán. Workbook người dùng không được đưa vào source.
+
+- File: `BBNT CB chốt Thanh Toán Đ2.xlsx`
+- Tên sheet DM chính xác: `DM `
+- Used range DM: `A1:M236`
+- Tổng sheet: **141**; dòng công việc DM: **198**
+- Dòng có ít nhất một sheet: **85**; chưa có sheet: **113**
+
+## Mapping DM đã xác minh
+
+- `A`: itemNumber / lookup key
+- `B`: local order within section
+- `C`: work content / inspection object
+- `D`: construction location
+- `E`: acceptance date-time / main document date
+- `F`: acceptance document number
+- `G`: sample date
+
+## Sheet số
+
+`109`, `110`, `111`, `112`, `113`, `114`, `115`, `116`, `117`, `118`, `119`, `120`, `121`, `122`, `123`, `124`, `125`, `126`, `127`, `128`, `129`, `130`, `131`, `132`, `133`, `134`, `135`, `136`, `137`, `138`, `139`, `140`, `141`, `142`, `143`, `144`, `145`, `146`, `147`, `148`, `149`, `150`, `151`, `152`, `153`, `154`, `155`, `157`, `156`, `158`, `159`, `160`, `161`, `162`, `163`, `164`, `165`, `166`, `167`, `168`, `169`, `170`, `171`, `172`, `173`, `174`, `175`, `176`, `177`, `178`, `179`, `181`, `182`, `183`, `184`, `185`, `186`, `187`, `188`, `189`, `190`, `191`, `192`, `193`, `194`
+
+
+## Sheet LMV/GMV/LMBT/GMBT
+
+- `1.LMV (111)` → LM/VUA, item `111`, lỗi=1, merge=30, drawing=True
+- `1.GMV (111)` → GM/VUA, item `111`, lỗi=1, merge=22, drawing=True
+- `1.LMV (114)` → LM/VUA, item `114`, lỗi=1, merge=30, drawing=True
+- `1.GMV (114)` → GM/VUA, item `114`, lỗi=1, merge=22, drawing=True
+- `1.LMV (117)` → LM/VUA, item `117`, lỗi=1, merge=30, drawing=True
+- `1.GMV (117)` → GM/VUA, item `117`, lỗi=1, merge=22, drawing=True
+- `1.LMV (120)` → LM/VUA, item `120`, lỗi=1, merge=30, drawing=True
+- `1.GMV (120)` → GM/VUA, item `120`, lỗi=1, merge=22, drawing=True
+- `1.LMV (123)` → LM/VUA, item `123`, lỗi=1, merge=30, drawing=True
+- `1.GMV (123)` → GM/VUA, item `123`, lỗi=1, merge=22, drawing=True
+- `1.LMV (127)` → LM/VUA, item `127`, lỗi=1, merge=30, drawing=True
+- `1.GMV (127)` → GM/VUA, item `127`, lỗi=1, merge=22, drawing=True
+- `1.LMV (131)` → LM/VUA, item `131`, lỗi=1, merge=30, drawing=True
+- `1.GMV (131)` → GM/VUA, item `131`, lỗi=1, merge=22, drawing=True
+- `1.LMV (135)` → LM/VUA, item `135`, lỗi=1, merge=30, drawing=True
+- `1.GMV (135)` → GM/VUA, item `135`, lỗi=1, merge=22, drawing=True
+- `1.LMV (139)` → LM/VUA, item `139`, lỗi=1, merge=30, drawing=True
+- `1.GMV (139)` → GM/VUA, item `139`, lỗi=1, merge=22, drawing=True
+- `1.LMBT (141)` → LM/BETONG, item `141`, lỗi=1, merge=30, drawing=True
+- `1.GMBT (141)` → GM/BETONG, item `141`, lỗi=1, merge=22, drawing=True
+- `1.LMBT (145)` → LM/BETONG, item `145`, lỗi=1, merge=30, drawing=True
+- `1.GMBT (145)` → GM/BETONG, item `145`, lỗi=1, merge=22, drawing=True
+- `1.LMV (147)` → LM/VUA, item `147`, lỗi=1, merge=30, drawing=True
+- `1.GMV (147)` → GM/VUA, item `147`, lỗi=1, merge=22, drawing=True
+- `1.LMBT (153)` → LM/BETONG, item `153`, lỗi=1, merge=30, drawing=True
+- `1.GMBT (153)` → GM/BETONG, item `153`, lỗi=1, merge=22, drawing=True
+- `1.LMV (155)` → LM/VUA, item `155`, lỗi=1, merge=30, drawing=True
+- `1.GMV (155)` → GM/VUA, item `155`, lỗi=1, merge=22, drawing=True
+- `1.LMV (157)` → LM/VUA, item `157`, lỗi=1, merge=30, drawing=True
+- `1.GMV (157)` → GM/VUA, item `157`, lỗi=1, merge=22, drawing=True
+- `1.LMV (159)` → LM/VUA, item `159`, lỗi=1, merge=30, drawing=True
+- `1.GMV (159)` → GM/VUA, item `159`, lỗi=1, merge=22, drawing=True
+- `1.LMBT (161)` → LM/BETONG, item `161`, lỗi=1, merge=30, drawing=True
+- `1.GMBT (161)` → GM/BETONG, item `161`, lỗi=1, merge=22, drawing=True
+- `1.LMBT (162)` → LM/BETONG, item `162`, lỗi=1, merge=30, drawing=True
+- `1.GMBT (162)` → GM/BETONG, item `162`, lỗi=1, merge=22, drawing=True
+- `1.LMBT (166)` → LM/BETONG, item `166`, lỗi=1, merge=30, drawing=True
+- `1.GMBT (166)` → GM/BETONG, item `166`, lỗi=1, merge=22, drawing=True
+- `1.LMV (169)` → LM/VUA, item `169`, lỗi=1, merge=30, drawing=True
+- `1.GMV (169)` → GM/VUA, item `169`, lỗi=1, merge=22, drawing=True
+- `1.LMV (175)` → LM/VUA, item `175`, lỗi=1, merge=34, drawing=True
+- `1.GMV (175)` → GM/VUA, item `175`, lỗi=1, merge=26, drawing=True
+- `1.LMV (179)` → LM/VUA, item `179`, lỗi=1, merge=30, drawing=True
+- `1.GMV (179)` → GM/VUA, item `179`, lỗi=1, merge=22, drawing=True
+- `1.LMBT (183)` → LM/BETONG, item `183`, lỗi=1, merge=30, drawing=True
+- `1.GMBT (183)` → GM/BETONG, item `183`, lỗi=1, merge=22, drawing=True
+- `1.LMV (185)` → LM/VUA, item `185`, lỗi=1, merge=34, drawing=True
+- `1.GMV (185)` → GM/VUA, item `185`, lỗi=1, merge=26, drawing=True
+
+## Các cặp theo itemNumber
+
+- `111`: MAIN=['111']; LMV=['1.LMV (111)']; GMV=['1.GMV (111)']; LMBT=[]; GMBT=[]
+- `114`: MAIN=['114']; LMV=['1.LMV (114)']; GMV=['1.GMV (114)']; LMBT=[]; GMBT=[]
+- `117`: MAIN=['117']; LMV=['1.LMV (117)']; GMV=['1.GMV (117)']; LMBT=[]; GMBT=[]
+- `120`: MAIN=['120']; LMV=['1.LMV (120)']; GMV=['1.GMV (120)']; LMBT=[]; GMBT=[]
+- `123`: MAIN=['123']; LMV=['1.LMV (123)']; GMV=['1.GMV (123)']; LMBT=[]; GMBT=[]
+- `127`: MAIN=['127']; LMV=['1.LMV (127)']; GMV=['1.GMV (127)']; LMBT=[]; GMBT=[]
+- `131`: MAIN=['131']; LMV=['1.LMV (131)']; GMV=['1.GMV (131)']; LMBT=[]; GMBT=[]
+- `135`: MAIN=['135']; LMV=['1.LMV (135)']; GMV=['1.GMV (135)']; LMBT=[]; GMBT=[]
+- `139`: MAIN=['139']; LMV=['1.LMV (139)']; GMV=['1.GMV (139)']; LMBT=[]; GMBT=[]
+- `141`: MAIN=['141']; LMV=[]; GMV=[]; LMBT=['1.LMBT (141)']; GMBT=['1.GMBT (141)']
+- `145`: MAIN=['145']; LMV=[]; GMV=[]; LMBT=['1.LMBT (145)']; GMBT=['1.GMBT (145)']
+- `147`: MAIN=['147']; LMV=['1.LMV (147)']; GMV=['1.GMV (147)']; LMBT=[]; GMBT=[]
+- `153`: MAIN=['153']; LMV=[]; GMV=[]; LMBT=['1.LMBT (153)']; GMBT=['1.GMBT (153)']
+- `155`: MAIN=['155']; LMV=['1.LMV (155)']; GMV=['1.GMV (155)']; LMBT=[]; GMBT=[]
+- `157`: MAIN=['157']; LMV=['1.LMV (157)']; GMV=['1.GMV (157)']; LMBT=[]; GMBT=[]
+- `159`: MAIN=['159']; LMV=['1.LMV (159)']; GMV=['1.GMV (159)']; LMBT=[]; GMBT=[]
+- `161`: MAIN=['161']; LMV=[]; GMV=[]; LMBT=['1.LMBT (161)']; GMBT=['1.GMBT (161)']
+- `162`: MAIN=['162']; LMV=[]; GMV=[]; LMBT=['1.LMBT (162)']; GMBT=['1.GMBT (162)']
+- `166`: MAIN=['166']; LMV=[]; GMV=[]; LMBT=['1.LMBT (166)']; GMBT=['1.GMBT (166)']
+- `169`: MAIN=['169']; LMV=['1.LMV (169)']; GMV=['1.GMV (169)']; LMBT=[]; GMBT=[]
+- `175`: MAIN=['175']; LMV=['1.LMV (175)']; GMV=['1.GMV (175)']; LMBT=[]; GMBT=[]
+- `179`: MAIN=['179']; LMV=['1.LMV (179)']; GMV=['1.GMV (179)']; LMBT=[]; GMBT=[]
+- `183`: MAIN=['183']; LMV=[]; GMV=[]; LMBT=['1.LMBT (183)']; GMBT=['1.GMBT (183)']
+- `185`: MAIN=['185']; LMV=['1.LMV (185)']; GMV=['1.GMV (185)']; LMBT=[]; GMBT=[]
+
+## Dòng DM chưa có sheet
+
+- `1` — Bật mực tim, trục, cao độ tường xây — Tầng 1
+- `2` — Gia công lắp dựng cốt thép trụ tăng cứng — Tầng 1
+- `3` — Gia công lắp dựng ván khuôn trụ tăng cứng — Tầng 1
+- `4` — Đổ bê tông trụ tăng cứng cấp độ bền B15 — Tầng 1
+- `5` — Chất lượng Bê tông trụ tăng cứng cấp độ bền B15 — Tầng 1
+- `6` — Gia công lắp dựng cốt thép lanh tô, đà thang hàng — Tầng 1,2,3, tum, mái
+- `7` — Gia công lắp dựng ván khuôn lanh tô, đà thang hàng — Tầng 1,2,3, tum, mái
+- `8` — Đổ bê tông lanh tô, đà thang hàng cấp độ bền B15 — Tầng 1,2,3, tum, mái
+- `9` — Chất lượng Bê tông lanh tô, đà thang hàng cấp độ bền B15 — Tầng 1,2,3, tum, mái
+- `10` — Khoan cấy thép  (thép râu liên kết tường xây) — Tầng 1
+- `11` — Gia công lắp dựng cốt thép giằng tường — Tầng 1
+- `12` — Gia công lắp dựng ván khuôn giằng tường — Tầng 1
+- `13` — Đổ bê tông giằng tường cấp độ bền B15 — Tầng 1
+- `14` — Chất lượng bê tông giằng tường cấp độ bền B15 — Tầng 1
+- `15` — Gia công, lắp dựng cốt thép dầm đỡ tường xây loại A, B, C, D — Tầng 1
+- `16` — Gia công, lắp dựng ván khuôn dầm đỡ tường xây loại A, B, C, D — Tầng 1
+- `17` — Đổ bê tông dầm đỡ tường xây loại A,B,C,D; cấp độ bền B15 — Tầng 1
+- `18` — Chất lượng bê tông dầm đỡ tường xây loại A,B,C,D; cấp độ bền B15 — Tầng 1
+- `19` — Xây tường gạch đất nung, vữa Xi măng mác 75 — Tầng 1
+- `20` — Chất lượng vữa xây tường gạch, vữa Xi măng mác 75 — Tầng 1
+- `21` — Bật mực tim, trục, cao độ tường xây — Tầng 2
+- `22` — Gia công lắp dựng cốt thép trụ tăng cứng — Tầng 2
+- `23` — Gia công lắp dựng ván khuôn trụ tăng cứng — Tầng 2
+- `24` — Đổ bê tông trụ tăng cứng cấp độ bền B15 — Tầng 2
+- `25` — Chất lượng Bê tông trụ tăng cứng cấp độ bền B15 — Tầng 2
+- `26` — Khoan cấy thép  (thép râu liên kết tường xây) — Tầng 2
+- `27` — Gia công lắp dựng cốt thép giằng tường — Tầng 2
+- `28` — Gia công lắp dựng ván khuôn giằng tường — Tầng 2
+- `29` — Đổ bê tông giằng tường cấp độ bền B15 — Tầng 2
+- `30` — Chất lượng Bê tông giằng tường cấp độ bền B15 — Tầng 2
+- `31` — Gia công, lắp đặt cốt thép dầm đỡ tường xây loại B — Tầng 2
+- `32` — Gia công, lắp dựng ván khuôn dầm đỡ tường xây loại B — Tầng 2
+- `33` — Đổ bê tông dầm đỡ tường xây loại B — Tầng 2
+- `34` — Chất lượng bê tông dầm đỡ tường xây loại B — Tầng 2
+- `35` — Xây tường gạch đất nung, vữa Xi măng mác 75 — Tầng 2
+- `36` — Chất lượng vữa xây tường gạch, vữa Xi măng mác 75 — Tầng 2
+- `37` — Bật mực tim, trục, cao độ tường xây — Tầng 3
+- `38` — Gia công lắp dựng cốt thép trụ tăng cứng — Tầng 3
+- `39` — Gia công lắp dựng ván khuôn trụ tăng cứng — Tầng 3
+- `40` — Đổ bê tông trụ tăng cứng cấp độ bền B15 — Tầng 3
+- `41` — Chất lượng Bê tông trụ tăng cứng cấp độ bền B15 — Tầng 3
+- `42` — Khoan cấy thép  (thép râu liên kết tường xây) — Tầng 3
+- `43` — Gia công lắp dựng cốt thép giằng tường — Tầng 3
+- `44` — Gia công lắp dựng ván khuôn giằng tường — Tầng 3
+- `45` — Đổ bê tông giằng tường cấp độ bền B15 — Tầng 3
+- `46` — Chất lượng Bê tông giằng tường cấp độ bền B15 — Tầng 3
+- `47` — Xây tường gạch đất nung, vữa Xi măng mác 75 — Tầng 3
+- `48` — Chất lượng vữa xây tường gạch, vữa Xi măng mác 75 — Tầng 3
+- `49` — Bật mực tim, trục, cao độ tường xây — Tầng tum
+- `50` — Gia công lắp dựng cốt thép trụ tăng cứng — Tầng tum
+- `51` — Gia công lắp dựng ván khuôn trụ tường — Tầng tum
+- `52` — Đổ bê tông trụ tăng cứng cấp độ bền B15 — Tầng tum
+- `53` — Chất lượng Bê tông trụ tăng cứng cấp độ bền B15 — Tầng tum
+- `54` — Khoan cấy thép  (thép râu liên kết tường xây) — Tầng tum
+- `55` — Gia công lắp dựng cốt thép giằng tường cao độ +2600 — Tầng tum
+- `56` — Gia công lắp dựng ván khuôn giằng tường cao độ +2600 — Tầng tum
+- `57` — Đổ bê tông giằng tường cao độ +2600 cấp độ bền B15 — Tầng tum
+- `58` — Chất lượng Bê tông giằng tường cao độ +2600; cấp độ bền B15 — Tầng tum
+- `59` — Gia công lắp dựng cốt thép giằng đỉnh tường — Tầng tum
+- `60` — Gia công lắp dựng ván khuôn giằng tường đỉnh tường — Tầng tum
+- `61` — Đổ bê tông giằng tường đỉnh tường cấp độ bền B15 — Tầng tum
+- `62` — Chất lượng Bê tông giằng tường đỉnh tường cấp độ bền B15 — Tầng tum
+- `63` — Xây tường gạch đất nung, vữa Xi măng mác 75 — Tầng tum
+- `64` — Chất lượng vữa xây tường gạch, vữa Xi măng mác 75 — Tầng tum
+- `65` — Bật mực tim, trục, cao độ tường xây — Tầng mái
+- `66` — Gia công lắp dựng cốt thép trụ tăng cứng — Tầng mái
+- `67` — Gia công lắp dựng ván khuôn trụ tường — Tầng mái
+- `68` — Đổ bê tông trụ tăng cứng cấp độ bền B15 — Tầng mái
+- `69` — Chất lượng Bê tông trụ tăng cứng cấp độ bền B15 — Tầng mái
+- `70` — Khoan cấy thép  (thép râu liên kết tường xây) — Tầng mái
+- `71` — Gia công lắp dựng cốt thép giằng tường — Tầng mái
+- `72` — Gia công lắp dựng ván khuôn giằng tường — Tầng mái
+- `73` — Đổ bê tông giằng tường cấp độ bền B15 — Tầng mái
+- `74` — Chất lượng Bê tông giằng tường cấp độ bền B15 — Tầng mái
+- `75` — Xây tường gạch đất nung, vữa Xi măng mác 75 — Tầng mái
+- `76` — Chất lượng vữa xây tường gạch, vữa Xi măng mác 75 — Tầng mái
+- `77` — Đắp đất nền móng công trình — Nhà rác
+- `78` — Bật mực tim, trục, cao độ bê tông lót giằng móng — Nhà rác
+- `79` — Gia công lắp dựng ván khuôn bê tông lót giằng móng — Nhà rác
+- `80` — Đổ bê tông lót móng giằng móng M100 cấp chống thấm 2 — Nhà rác
+- `81` — Chất lượng Bê tông lót giằng móng M100 cấp chống thấm 2 — Nhà rác
+- `82` — Bật mực tim, trục, cao độ bê tông giằng móng — Nhà rác
+- `83` — Gia công lắp dựng cốt thép giằng móng — Nhà rác
+- `84` — Gia công lắp dựng ván khuôn giằng móng — Nhà rác
+- `85` — Đổ bê tông giằng móng  cấp độ bền B20, cấp chống thấm 4 — Nhà rác
+- `86` — Chất lượng Bê tông giằng móng  cấp độ bền B20, cấp chống thấm 4 — Nhà rác
+- `87` — Bật mực tim, trục, cao độ bê tông cột — Nhà rác
+- `88` — Gia công lắp dựng cốt thép cột — Nhà rác
+- `89` — Gia công lắp dựng ván khuôn cột — Nhà rác
+- `90` — Đổ bê tông cột cấp độ bền B25, cấp chống thấm 6 — Nhà rác
+- `91` — Chất lượng Bê tông cột cấp độ bền B25, cấp chống thấm 6 — Nhà rác
+- `92` — Bật mực tim, trục, cao độ tường xây — Nhà rác
+- `93` — Khoan cấy thép  (thép râu liên kết tường xây) — Nhà rác
+- `94` — Gia công lắp dựng cốt thép lanh tô — Nhà rác
+- `95` — Gia công lắp dựng ván khuôn lanh tô — Nhà rác
+- `96` — Đổ bê tông lanh tô cấp độ bền B15, cấp chống thấm 2 — Nhà rác
+- `97` — Chất lượng Bê tông lanh tô cấp độ bền B15, cấp chống thấm 2 — Nhà rác
+- `98` — Xây tường gạch đất nung, vữa Xi măng mác 75 — Nhà rác
+- `99` — Chất lượng vữa xây tường gạch, vữa Xi măng mác 75 — Nhà rác
+- `100` — Bật mực tim, trục, cao độ bê tông sàn mái — Nhà rác
+- `101` — Gia công lắp dựng ván khuôn sàn mái — Nhà rác
+- `102` — Gia công lắp dựng cốt thép sàn mái — Nhà rác
+- `103` — Đổ bê tông sàn mái cấp độ bền B25, cấp chống thấm 6 — Nhà rác
+- `104` — Chất lượng Bê tông sàn mái cấp độ bền B25, cấp chống thấm 6 — Nhà rác
+- `105` — Bật mực tim, trục, cao độ tường xây chắn mái — Nhà rác
+- `106A` — Gia công lắp dựng cốt thép giằng đỉnh tường chắn mái — Nhà rác
+- `106B` — Gia công lắp dựng ván khuôn giằng đỉnh tường chắn mái — Nhà rác
+- `106C` — Đổ bê tông giằng đỉnh tường chắn mái, cấp chống thấm 2 — Nhà rác
+- `106D` — Chất lượng Bê tông giằng đỉnh tường chắn mái, cấp chống thấm 2 — Nhà rác
+- `106` — Xây tường chắn mái gạch đất nung, vữa Xi măng mác 75 — Nhà rác
+- `107` — Chất lượng vữa xây tường chắn mái, vữa Xi măng mác 75 — Nhà rác
+- `108` — Lắp dựng giàn giáo tuýp trát ngoài, bao gồm lưới bao che — Ngoài nhà
+- `180` — Láng lòng rãnh VXM trộn phụ gia chống thấm dày 2cm — Nhà rác
+
+## Template candidates
+
+- VUA_LM: `1.LMV (111)` (score 7, errors 1), `1.LMV (114)` (score 7, errors 1), `1.LMV (117)` (score 7, errors 1), `1.LMV (120)` (score 7, errors 1), `1.LMV (123)` (score 7, errors 1)
+- VUA_GM: `1.GMV (111)` (score 7, errors 1), `1.GMV (114)` (score 7, errors 1), `1.GMV (117)` (score 7, errors 1), `1.GMV (120)` (score 7, errors 1), `1.GMV (123)` (score 7, errors 1)
+- BETONG_LM: `1.LMBT (141)` (score 7, errors 1), `1.LMBT (145)` (score 7, errors 1), `1.LMBT (153)` (score 7, errors 1), `1.LMBT (161)` (score 7, errors 1), `1.LMBT (162)` (score 7, errors 1)
+- BETONG_GM: `1.GMBT (141)` (score 7, errors 1), `1.GMBT (145)` (score 7, errors 1), `1.GMBT (153)` (score 7, errors 1), `1.GMBT (161)` (score 7, errors 1), `1.GMBT (162)` (score 7, errors 1)
+
+## Ô/công thức lỗi phát hiện
+
+- `109!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `110!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `111!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (111)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (111)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `112!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `113!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `114!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (114)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (114)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `115!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `116!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `117!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (117)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (117)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `118!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `119!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `120!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (120)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (120)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `121!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `122!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `123!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (123)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (123)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `124!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `125!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `126!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `127!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (127)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (127)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `128!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `129!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `130!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `131!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (131)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (131)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `132!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `133!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `134!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `135!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (135)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (135)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `136!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `137!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `138!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `139!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (139)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (139)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `140!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `141!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMBT (141)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (141)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `142!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `143!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `144!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `145!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMBT (145)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (145)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `146!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `147!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (147)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (147)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `148!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `149!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `150!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `151!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `152!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `153!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMBT (153)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (153)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `154!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `155!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (155)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (155)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `157!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `156!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `1.LMV (157)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (157)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `158!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `159!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (159)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (159)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `160!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `161!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMBT (161)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (161)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `162!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMBT (162)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (162)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `163!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `164!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `165!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `166!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMBT (166)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (166)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `167!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `168!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `169!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (169)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (169)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `170!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `171!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `172!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `173!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `174!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `175!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (175)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (175)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `176!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `177!AH74` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF74)`
+- `178!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `179!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (179)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (179)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `181!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `182!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `183!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMBT (183)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (183)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `184!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `185!AH75` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF75)`
+- `1.LMV (185)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (185)!D15` displayed=`#REF!` formula=`VLOOKUP(#REF!,#REF!,4)`
+- `186!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `187!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `188!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `189!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `190!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `191!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `192!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `193!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+- `194!AH72` displayed=`#REF!` formula=`INDEX(DanhMuc,#REF!,AF72)`
+
+## Ô template cần sanitize
+
+- `1.LMV (111)!J7` ['P1_FORMULA']: `10:00 11/05/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (111)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/111` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (111)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (111)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường, cột trụ, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (111)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (111)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (111)!J7` ['P1_FORMULA']: `10:00 18/05/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (111)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/111` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (111)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (111)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường, cột trụ, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (111)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/111` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (111)!N33` ['P1_FORMULA']: `45423.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (114)!J7` ['P1_FORMULA']: `10:00 19/05/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (114)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/114` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (114)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (114)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường, cột trụ, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (114)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (114)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (114)!J7` ['P1_FORMULA']: `10:00 26/05/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (114)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/114` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (114)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (114)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường, cột trụ, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (114)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/114` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (114)!N33` ['P1_FORMULA']: `45431.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (117)!J7` ['P1_FORMULA']: `10:00 23/05/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (117)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/117` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (117)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (117)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường, cột trụ, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (117)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (117)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (117)!J7` ['P1_FORMULA']: `10:00 30/05/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (117)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/117` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (117)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (117)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường, cột trụ, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (117)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/117` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (117)!N33` ['P1_FORMULA']: `45435.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (120)!J7` ['P1_FORMULA']: `10:00 29/05/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (120)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/120` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (120)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (120)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường, cột tru, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (120)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (120)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (120)!J7` ['P1_FORMULA']: `10:00 05/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (120)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/120` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (120)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (120)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường, cột tru, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (120)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/120` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (120)!N33` ['P1_FORMULA']: `45441.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (123)!J7` ['P1_FORMULA']: `10:00 01/06/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (123)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/123` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (123)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (123)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường, cột trụ, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (123)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (123)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (123)!J7` ['P1_FORMULA']: `10:00 08/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (123)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/123` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (123)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (123)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường, cột trụ, cạnh cửa đi, cửa sổ, thang  bộ chiều dày 1,5mm, vữa XM mác 75 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (123)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/123` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (123)!N33` ['P1_FORMULA']: `45444.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (127)!J7` ['P1_FORMULA']: `10:00 18/05/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (127)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/127` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (127)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (127)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường, đỉnh tường, chiều dày trát 1,5mm, vữa XM mác 75(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (127)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (127)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (127)!J7` ['P1_FORMULA']: `10:00 25/05/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (127)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/127` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (127)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (127)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường, đỉnh tường, chiều dày trát 1,5mm, vữa XM mác 75 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (127)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/127` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (127)!N33` ['P1_FORMULA']: `45430.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (131)!J7` ['P1_FORMULA']: `10:00 28/05/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (131)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/131` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (131)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (131)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường, đỉnh tường, chiều dày trát 1,5mm, vữa XM mác 75(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (131)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (131)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (131)!J7` ['P1_FORMULA']: `10:00 04/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (131)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/131` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (131)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (131)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường, đỉnh tường, chiều dày trát 1,5mm, vữa XM mác 75 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (131)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/131` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (131)!N33` ['P1_FORMULA']: `45440.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (135)!J7` ['P1_FORMULA']: `10:00 08/06/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (135)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/135` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (135)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (135)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường, đỉnh tường, chiều dày trát 1,5mm, vữa XM mác 75(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (135)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (135)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (135)!J7` ['P1_FORMULA']: `10:00 15/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (135)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/135` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (135)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (135)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường, đỉnh tường, chiều dày trát 1,5mm, vữa XM mác 75 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (135)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/135` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (135)!N33` ['P1_FORMULA']: `45451.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (139)!J7` ['P1_FORMULA']: `10:00 17/06/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (139)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/139` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (139)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (139)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường, đỉnh tường, chiều dày trát 1,5mm, vữa XM mác 75(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (139)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (139)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (139)!J7` ['P1_FORMULA']: `10:00 24/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (139)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/139` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (139)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (139)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường, đỉnh tường, chiều dày trát 1,5mm, vữa XM mác 75 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (139)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/139` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (139)!N33` ['P1_FORMULA']: `45460.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (141)!J7` ['P1_FORMULA']: `10:00 22/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (141)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/141` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.LMBT (141)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMBT (141)!C31` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Lấy mẫu bê tông lót tam cấp, đường dốc, cấp độ bền B7.5(Tam cấp số 1,2,3,4)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMBT (141)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `150x150x150` / ``
+- `1.LMBT (141)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác B15;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMBT (141)!J7` ['P1_FORMULA']: `10:00 29/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMBT (141)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/141` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/GM/")`
+- `1.GMBT (141)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (141)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu bê tông lót tam cấp, đường dốc, cấp độ bền B7.5 (Tam cấp số 1,2,3,4)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMBT (141)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/141` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.GMBT (141)!N33` ['P1_FORMULA']: `45465.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (145)!J7` ['P1_FORMULA']: `16:30 25/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (145)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/145` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.LMBT (145)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMBT (145)!C31` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Lấy mẫu bê tông dầm tam cấp, đường dốc, cấp độ bền B15(Tam cấp số 1,2,3,4)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMBT (145)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `150x150x150` / ``
+- `1.LMBT (145)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác B15;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMBT (145)!J7` ['P1_FORMULA']: `16:30 02/07/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMBT (145)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/145` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/GM/")`
+- `1.GMBT (145)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (145)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu bê tông dầm tam cấp, đường dốc, cấp độ bền B15 (Tam cấp số 1,2,3,4)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMBT (145)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/145` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.GMBT (145)!N33` ['P1_FORMULA']: `45468.6875` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (147)!J7` ['P1_FORMULA']: `16:30 26/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (147)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/147` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (147)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (147)!C31` ['P1_FORMULA']: `Lấy mẫu vữa xây móng tam cấp, đường dốc, vữa XM mác 75(Tam cấp số 1,2,3,4)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMV (147)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (147)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.LMV (147)!C33` ['P1_FORMULA']: `Mẫu vữa xây móng tam cấp, đường dốc, vữa XM mác 75 (Tam cấp số 1,2,3,4)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (147)!J7` ['P1_FORMULA']: `16:30 03/07/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (147)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/147` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (147)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (147)!C33` ['P1_FORMULA']: `Mẫu vữa xây móng tam cấp, đường dốc, vữa XM mác 75 (Tam cấp số 1,2,3,4)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (147)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/147` / `REPLACE(VLOOKUP(P1,'DM '!A12:H377,6),8,6,"/LM/")`
+- `1.GMV (147)!N33` ['P1_FORMULA']: `45469.6875` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (153)!J7` ['P1_FORMULA']: `16:30 02/07/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (153)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/153` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.LMBT (153)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMBT (153)!C31` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Lấy mẫu bê tông sàn tam cấp, đường dốc, cấp độ bền B15(Tam cấp số 1,2,3,4)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMBT (153)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `150x150x150` / ``
+- `1.LMBT (153)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác B15;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMBT (153)!J7` ['P1_FORMULA']: `16:30 09/07/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMBT (153)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/153` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/GM/")`
+- `1.GMBT (153)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (153)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu bê tông sàn tam cấp, đường dốc, cấp độ bền B15 (Tam cấp số 1,2,3,4)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMBT (153)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/153` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.GMBT (153)!N33` ['P1_FORMULA']: `45475.6875` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (155)!J7` ['P1_FORMULA']: `16:30 03/07/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (155)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/155` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (155)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (155)!C31` ['P1_FORMULA']: `Lấy mẫu vữa xây bậc tam cấp, đường dốc, vữa XM mác 75(Tam cấp số 1,2,3,4)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMV (155)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (155)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.LMV (155)!C33` ['P1_FORMULA']: `Mẫu vữa xây bậc tam cấp, đường dốc, vữa XM mác 75 (Tam cấp số 1,2,3,4)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (155)!J7` ['P1_FORMULA']: `16:30 10/07/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (155)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/155` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (155)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (155)!C33` ['P1_FORMULA']: `Mẫu vữa xây bậc tam cấp, đường dốc, vữa XM mác 75 (Tam cấp số 1,2,3,4)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (155)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/155` / `REPLACE(VLOOKUP(P1,'DM '!A12:H377,6),8,6,"/LM/")`
+- `1.GMV (155)!N33` ['P1_FORMULA']: `45476.6875` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (157)!J7` ['P1_FORMULA']: `16:30 30/05/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (157)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/157` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (157)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (157)!C31` ['P1_FORMULA']: `Lấy mẫu vữa xây cầu thang, vữa XM mác 75(Bể nước ngầm)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMV (157)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (157)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.LMV (157)!C33` ['P1_FORMULA']: `Mẫu vữa xây cầu thang, vữa XM mác 75 (Bể nước ngầm)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (157)!J7` ['P1_FORMULA']: `16:30 06/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (157)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/157` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (157)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (157)!C33` ['P1_FORMULA']: `Mẫu vữa xây cầu thang, vữa XM mác 75 (Bể nước ngầm)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (157)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/157` / `REPLACE(VLOOKUP(P1,'DM '!A12:H377,6),8,6,"/LM/")`
+- `1.GMV (157)!N33` ['P1_FORMULA']: `45442.6875` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (159)!J7` ['P1_FORMULA']: `16:30 02/06/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (159)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/159` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (159)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (159)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát mặt bậc thang, chiều dày 15mm, vữa xi măng mác 100(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (159)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (159)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (159)!J7` ['P1_FORMULA']: `16:30 09/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (159)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/159` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (159)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (159)!C33` ['P1_FORMULA']: `Mẫu vữa trát mặt bậc thang, chiều dày 15mm, vữa xi măng mác 100 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (159)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/159` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (159)!N33` ['P1_FORMULA']: `45445.6875` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (161)!J7` ['P1_FORMULA']: `00:00 30/12/99` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (161)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/161` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.LMBT (161)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMBT (161)!C31` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Lấy mẫu  ram dốc, M100(Nhà rác)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMBT (161)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `150x150x150` / ``
+- `1.LMBT (161)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác B15;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMBT (161)!J7` ['P1_FORMULA']: `00:00 06/01/00` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMBT (161)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/161` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/GM/")`
+- `1.GMBT (161)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (161)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu  ram dốc, M100 (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMBT (161)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/161` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.GMBT (161)!N33` ['P1_FORMULA']: `0` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (162)!J7` ['P1_FORMULA']: `10:00 20/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (162)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/162` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.LMBT (162)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMBT (162)!C31` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Lấy mẫu Bê tông lót ram dốc, M100(Nhà rác)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMBT (162)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `150x150x150` / ``
+- `1.LMBT (162)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác B15;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMBT (162)!J7` ['P1_FORMULA']: `10:00 27/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMBT (162)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/162` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/GM/")`
+- `1.GMBT (162)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (162)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu Bê tông lót ram dốc, M100 (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMBT (162)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/162` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.GMBT (162)!N33` ['P1_FORMULA']: `45463.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (166)!J7` ['P1_FORMULA']: `16:29 23/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (166)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/166` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.LMBT (166)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMBT (166)!C31` ['P1_FORMULA']: `Lấy mẫu Bê tông ram dốc M200 (Nhà rác)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMBT (166)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `150x150x150` / ``
+- `1.LMBT (166)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác B15;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMBT (166)!J7` ['P1_FORMULA']: `16:29 30/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMBT (166)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/166` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/GM/")`
+- `1.GMBT (166)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (166)!C33` ['P1_FORMULA']: `Mẫu Bê tông ram dốc M200  (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMBT (166)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/166` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.GMBT (166)!N33` ['P1_FORMULA']: `45466.6875` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (169)!J7` ['P1_FORMULA']: `16:00 16/06/24` / `VLOOKUP(P1,'DM '!A10:I329,7)`
+- `1.LMV (169)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/169` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (169)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (169)!C31` ['P1_FORMULA']: `Lấy mẫu vữa trát tường trong nhà, vữa XM M50(Ngoài nhà)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.LMV (169)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (169)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMV (169)!J7` ['P1_FORMULA']: `16:00 23/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (169)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/169` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (169)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (169)!C33` ['P1_FORMULA']: `Mẫu vữa trát tường trong nhà, vữa XM M50 (Ngoài nhà)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I129,4)&")"`
+- `1.GMV (169)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/169` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.GMV (169)!N33` ['P1_FORMULA']: `45459.6666667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (175)!J7` ['P1_FORMULA']: `10:00 29/06/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (175)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/175` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (175)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (175)!C31` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Lấy mẫu vữa láng rãnh thu nước, nền sàn mái, vữa XM M75(Nhà rác)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMV (175)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (175)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.LMV (175)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu vữa láng rãnh thu nước, nền sàn mái, vữa XM M75 (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (175)!J7` ['P1_FORMULA']: `10:00 06/07/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (175)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/175` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (175)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (175)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu vữa láng rãnh thu nước, nền sàn mái, vữa XM M75 (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (175)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/175` / `REPLACE(VLOOKUP(P1,'DM '!A12:H377,6),8,6,"/LM/")`
+- `1.GMV (175)!N33` ['P1_FORMULA']: `45472.4166667` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (179)!J7` ['P1_FORMULA']: `10:30 30/08/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (179)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/179` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (179)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (179)!C31` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Lấy mẫu vữa xây rãnh, vữa XM M75(Nhà rác)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMV (179)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (179)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.LMV (179)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu vữa xây rãnh, vữa XM M75 (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (179)!J7` ['P1_FORMULA']: `10:30 06/09/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (179)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/179` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (179)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (179)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu vữa xây rãnh, vữa XM M75 (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (179)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/179` / `REPLACE(VLOOKUP(P1,'DM '!A12:H377,6),8,6,"/LM/")`
+- `1.GMV (179)!N33` ['P1_FORMULA']: `45534.4375` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (183)!J7` ['P1_FORMULA']: `10:30 04/09/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMBT (183)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/183` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.LMBT (183)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMBT (183)!C31` ['P1_FORMULA']: `Lấy mẫu Bê tông nền; xi măng đá 1x2 M200 dày 100mm (Nhà rác)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMBT (183)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `150x150x150` / ``
+- `1.LMBT (183)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác B15;
+Mỗi tổ 3 mẫu` / ``
+- `1.GMBT (183)!J7` ['P1_FORMULA']: `10:30 11/09/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMBT (183)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/183` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/GM/")`
+- `1.GMBT (183)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMBT (183)!C33` ['P1_FORMULA']: `Mẫu Bê tông nền; xi măng đá 1x2 M200 dày 100mm  (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMBT (183)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/183` / `REPLACE(VLOOKUP(P1,'DM '!A12:H529,6),8,6,"/LM/")`
+- `1.GMBT (183)!N33` ['P1_FORMULA']: `45539.4375` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (185)!J7` ['P1_FORMULA']: `10:30 05/09/24` / `VLOOKUP(P1,'DM '!A10:I529,7)`
+- `1.LMV (185)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/185` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/LM/")`
+- `1.LMV (185)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.LMV (185)!C31` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Lấy mẫu vữa Láng, vữa xi măng M75 (R7)(Nhà rác)` / `"Lấy mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&"("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.LMV (185)!G31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `40x40x160` / ``
+- `1.LMV (185)!M31` ['UNCERTAIN_TEMPLATE_PARAMETER']: `Mác M75;
+Mỗi tổ 3 mẫu` / ``
+- `1.LMV (185)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu vữa Láng, vữa xi măng M75 (R7) (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H278,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (185)!J7` ['P1_FORMULA']: `10:30 12/09/24` / `VLOOKUP(P1,'DM '!A10:I529,7)+7`
+- `1.GMV (185)!H8` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/GM/185` / `REPLACE(VLOOKUP(P1,'DM '!A12:H577,6),8,6,"/GM/")`
+- `1.GMV (185)!D15` ['REF_ERROR']: `#REF!` / `VLOOKUP(#REF!,#REF!,4)`
+- `1.GMV (185)!C33` ['UNCERTAIN_TEMPLATE_PARAMETER', 'P1_FORMULA']: `Mẫu vữa Láng, vữa xi măng M75 (R7) (Nhà rác)` / `"Mẫu " &REPLACE(VLOOKUP(P1,'DM '!A12:H578,3),1,11,"")&" ("&VLOOKUP(P1,'DM '!A12:I529,4)&")"`
+- `1.GMV (185)!L33` ['P1_FORMULA', 'OLD_DOCUMENT_NUMBER']: `1503/CB/LM/185` / `REPLACE(VLOOKUP(P1,'DM '!A12:H377,6),8,6,"/LM/")`
+- `1.GMV (185)!N33` ['P1_FORMULA']: `45540.4375` / `VLOOKUP(P1,'DM '!A10:I529,7)`

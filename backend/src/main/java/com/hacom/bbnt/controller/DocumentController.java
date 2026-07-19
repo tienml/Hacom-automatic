@@ -28,7 +28,10 @@ public class DocumentController {
     @GetMapping("/{documentId}/excel")
     public ResponseEntity<Resource> excel(@PathVariable String documentId) {
         GeneratedDocument document = store.getDocument(documentId);
-        return fileResponse(document.excelPath(), MediaType.APPLICATION_OCTET_STREAM, "attachment");
+        MediaType excelType = document.excelPath().getFileName().toString().toLowerCase().endsWith(".xlsx")
+                ? MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                : MediaType.parseMediaType("application/vnd.ms-excel");
+        return fileResponse(document.excelPath(), excelType, "attachment");
     }
 
     @GetMapping("/{documentId}/pdf")

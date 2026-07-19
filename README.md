@@ -1,80 +1,67 @@
-# HaCom BBNT Automation — Version 1
+# HaCom BBNT Automation — Safe Existing Sheet V4
 
-Bản V1 bám trực tiếp vào workbook BBNT hiện tại của khách hàng:
+Bản này mở rộng trực tiếp source hiện có để hỗ trợ cả dòng DM đã có sheet và dòng chưa có sheet:
 
 ```text
 Upload BBNT
-→ Đọc sheet DM
-→ Chọn số danh mục
-→ Chọn các sheet đầu ra liên quan
-→ Tạo Excel
-→ Preview PDF
-→ Tải Excel/PDF và in
+→ đọc và xác minh DM
+→ chọn nhiều dòng
+→ mainPlan/lmPlan/gmPlan độc lập cho từng dòng
+→ xem trường sẽ điền/trống
+→ xuất Excel
+→ tạo PDF/preview/download/print
 ```
 
-## 1. Phạm vi đã hoàn thiện
+## Chức năng chính
 
-- Giao diện React + TypeScript theo bộ nhận diện HaCom Holdings.
-- Kéo thả/upload `.xls` và `.xlsx`, tối đa 50 MB.
-- Tự nhận diện sheet `DM`, kể cả tên có khoảng trắng như `DM `.
-- Đọc thông tin dự án ở phần đầu sheet DM.
-- Đọc các cột A–G: số DM, thứ tự, nội dung, vị trí, thời gian, số biên bản, ngày lấy mẫu.
-- Tìm sheet đầu ra theo số danh mục:
-  - tên đúng số, ví dụ `111`;
-  - tên có số trong ngoặc, ví dụ `1.LMV (111)`, `1.GMV (111)`.
-- Tìm kiếm, lọc vị trí, lọc có/không lấy mẫu, phân trang.
-- Chọn một công việc và các biểu mẫu cần xuất.
-- Ghi lại số tham chiếu vào ô `P1` của từng sheet đã chọn.
-- Tạo Excel kết quả mà không sửa file gốc.
-- Tạo riêng workbook in đã đóng băng công thức và chỉ giữ các sheet được chọn, tránh PDF chứa toàn bộ workbook.
-- Preview PDF trong trình duyệt, tải Excel/PDF và mở PDF để in.
-- Không đăng nhập, không database, không lịch sử; file tạm tự xóa sau 60 phút.
-- PDF hỗ trợ ba chế độ: Gotenberg, LibreOffice cài trên máy, hoặc tắt PDF.
+- Upload `.xls`/`.xlsx`, tối đa 50 MB.
+- Tìm sheet DM kể cả tên có khoảng trắng cuối như `DM `; có fallback nhận diện theo tiêu đề.
+- Đọc giá trị hiển thị bằng Apache POI `DataFormatter` và `FormulaEvaluator`.
+- Không giả định cứng dòng bắt đầu/kết thúc của DM; phát hiện used data thực tế.
+- Nhận diện sheet số và LMV/GMV/LMBT/GMBT bằng parser tên sheet.
+- Hai mode áp dụng **theo từng output MAIN/LM/GM**:
+  - `EXISTING_SHEET`: giữ nguyên sheet hiện có, không sanitize.
+  - `CLONE_TEMPLATE`: clone layout, xóa dữ liệu/công thức không chắc chắn, chỉ điền `CERTAIN + POPULATE`.
+- Nhận diện `VUA`, `BETONG`, `UNKNOWN`; UNKNOWN chỉ bắt buộc chọn family khi người dùng cần sinh LM/GM, còn MAIN hiện có vẫn xuất độc lập.
+- Hỗ trợ mixed selection: nhiều dòng, nhiều chế độ và nhiều họ vật liệu trong một lần xuất.
+- Giữ style, merge, border, row height, column width, drawing/logo, print area và page setup của template trong phạm vi Apache POI hỗ trợ.
+- Validator chặn `#REF!`, formula cũ, số/vị trí/nội dung template cũ và thông số mẫu chưa chắc chắn.
+- Excel kết quả được mở lại bằng Apache POI trước khi trả về.
+- PDF dùng Gotenberg hoặc LibreOffice; print workbook chỉ chứa sheet được chọn.
+- Workbook upload không bị sửa; file tạm tự xóa theo TTL.
 
-## 2. Tech stack
-
-### Frontend
-
-- React 19
-- TypeScript
-- Vite
-- CSS thuần, không phụ thuộc UI framework
-- Deploy được lên Vercel
+## Tech stack và phiên bản
 
 ### Backend
 
 - Java 21
-- Spring Boot 3.5
+- Spring Boot 3.5.16
+- Maven
 - Apache POI 5.5.1
-- File tạm trong thư mục hệ điều hành
+
+### Frontend
+
+- Node.js `>=20.19 <23`
+- React 19.2
+- TypeScript 7
+- Vite 8
+- Vitest
 
 ### PDF
 
-- Khuyến nghị: Gotenberg 8 LibreOffice bằng Docker.
-- Không muốn dùng Docker: cài LibreOffice và đặt `PDF_MODE=libreoffice`.
-- Chưa có bộ chuyển PDF: đặt `PDF_MODE=disabled`; hệ thống vẫn tạo Excel.
+- Gotenberg 8 LibreOffice qua Docker; hoặc
+- LibreOffice/`soffice` cài cục bộ; hoặc
+- `PDF_MODE=disabled` để chỉ xuất Excel.
 
-## 3. Bạn có bắt buộc phải cài Docker không?
-
-**Không bắt buộc.** Có ba cách chạy:
-
-### Cách A — Khuyến nghị, dễ nhất: dùng Docker cho toàn bộ hệ thống
-
-Cần cài:
-
-- Docker Desktop.
-
-Chạy tại thư mục gốc:
+## Chạy bằng Docker
 
 ```bash
 docker compose up --build
 ```
 
-Mở:
-
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:8080`
-- Gotenberg: chỉ bind local tại `http://localhost:3000`
+- Gotenberg: `http://127.0.0.1:3000`
 
 Dừng:
 
@@ -82,158 +69,67 @@ Dừng:
 docker compose down
 ```
 
-### Cách B — Backend và frontend chạy local, chỉ Gotenberg chạy Docker
+## Chạy local
 
-Cần cài:
-
-- Java 21 và Maven;
-- Node.js 20+;
-- Docker Desktop.
-
-Terminal 1:
-
-```bash
-docker run --rm -p 127.0.0.1:3000:3000 gotenberg/gotenberg:8-libreoffice
-```
-
-Terminal 2:
+### Backend
 
 ```bash
 cd backend
 mvn spring-boot:run
 ```
 
-Terminal 3:
+Chỉ xuất Excel:
 
 ```bash
-cd frontend
-npm install
-copy .env.example .env
-npm run dev
+PDF_MODE=disabled mvn spring-boot:run
 ```
 
-Trên macOS/Linux, thay `copy` bằng:
+Dùng LibreOffice cục bộ:
 
 ```bash
-cp .env.example .env
+PDF_MODE=libreoffice LIBREOFFICE_COMMAND=soffice mvn spring-boot:run
 ```
 
-### Cách C — Không dùng Docker
-
-Cần cài:
-
-- Java 21 và Maven;
-- Node.js 20+;
-- LibreOffice.
-
-Windows PowerShell:
+Windows PowerShell khi LibreOffice không nằm trong `PATH`:
 
 ```powershell
-cd backend
 $env:PDF_MODE="libreoffice"
 $env:LIBREOFFICE_COMMAND="C:\Program Files\LibreOffice\program\soffice.exe"
 mvn spring-boot:run
 ```
 
-Nếu `soffice` đã có trong `PATH`:
+### Frontend
 
-```powershell
-$env:PDF_MODE="libreoffice"
-mvn spring-boot:run
-```
-
-Frontend:
-
-```powershell
+```bash
 cd frontend
-npm install
-Copy-Item .env.example .env
+npm ci
+cp .env.example .env   # Windows: Copy-Item .env.example .env
 npm run dev
 ```
 
-### Chạy khi chưa cần PDF
+## Biến môi trường
 
-Windows PowerShell:
-
-```powershell
-cd backend
-$env:PDF_MODE="disabled"
-mvn spring-boot:run
-```
-
-Khi đó luồng upload, đọc DM, chọn biểu mẫu và tải Excel vẫn hoạt động; trang preview sẽ thông báo PDF chưa sẵn sàng.
-
-## 4. Cấu trúc thư mục
-
-```text
-hacom-bbnt-automation-v1/
-├── backend/
-│   ├── src/main/java/com/hacom/bbnt/
-│   │   ├── controller/
-│   │   ├── dto/
-│   │   ├── error/
-│   │   ├── model/
-│   │   └── service/
-│   ├── src/test/
-│   ├── Dockerfile
-│   └── pom.xml
-├── frontend/
-│   ├── public/
-│   │   ├── hacom-logo-horizontal.png
-│   │   └── hacom-logo-vertical.png
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── App.tsx
-│   │   ├── api.ts
-│   │   ├── icons.tsx
-│   │   ├── styles.css
-│   │   └── types.ts
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── vercel.json
-├── docs/
-│   ├── API.md
-│   ├── FUNCTION_FLOW.md
-│   └── ui-reference/
-└── docker-compose.yml
-```
-
-## 5. Biến môi trường backend
+### Backend
 
 | Biến | Mặc định | Ý nghĩa |
-|---|---|---|
+|---|---:|---|
 | `PORT` | `8080` | Cổng backend |
-| `APP_ALLOWED_ORIGINS` | `http://localhost:5173` | Origin được phép gọi API, phân tách bằng dấu phẩy |
+| `APP_ALLOWED_ORIGINS` | `http://localhost:5173` | Danh sách origin, phân tách bằng dấu phẩy |
+| `APP_STORAGE_ROOT` | thư mục temp hệ điều hành | Nơi giữ job/document tạm |
 | `APP_STORAGE_TTL_MINUTES` | `60` | Thời gian giữ file tạm |
+| `APP_STORAGE_CLEANUP_DELAY_MS` | `600000` | Chu kỳ dọn file |
 | `PDF_MODE` | `auto` | `auto`, `gotenberg`, `libreoffice`, `disabled` |
 | `GOTENBERG_BASE_URL` | `http://localhost:3000` | Địa chỉ Gotenberg |
-| `LIBREOFFICE_COMMAND` | `soffice` | Lệnh/đường dẫn chạy LibreOffice |
-| `PDF_TIMEOUT_SECONDS` | `120` | Timeout chuyển PDF |
+| `LIBREOFFICE_COMMAND` | `soffice` | Lệnh/đường dẫn LibreOffice |
+| `PDF_TIMEOUT_SECONDS` | `120` | Timeout PDF |
 
-`PDF_MODE=auto` sẽ thử Gotenberg trước, sau đó thử LibreOffice cài trên máy.
-
-## 6. Biến môi trường frontend
-
-Tạo `frontend/.env`:
+### Frontend
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080
 ```
 
-Khi deploy Vercel, đặt `VITE_API_BASE_URL` bằng domain backend thật.
-
-## 7. Kiểm thử
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run build
-```
-
-### Backend
+## Build và test
 
 ```bash
 cd backend
@@ -241,51 +137,57 @@ mvn test
 mvn package
 ```
 
-Các test hiện có kiểm tra:
+Kiểm thử workbook thật, không PDF:
 
-- nhận diện sheet `DM `;
-- đọc thông tin dự án và dòng số 111;
-- nhận diện sheet `111` và `1.LMV (111)`;
-- sinh workbook và ghi số tham chiếu tại `P1`;
-- giữ sheet được chọn ở trạng thái hiển thị.
-
-Đã kiểm thử thủ công với file BBNT khách hàng cho các số `111`, `112`, `114`; PDF danh mục 111 chỉ còn 5 trang thay vì xuất toàn bộ workbook.
-
-## 8. Deploy thử nghiệm
-
-### Frontend trên Vercel
-
-- Root directory: `frontend`
-- Build command: `npm run build`
-- Output directory: `dist`
-- Environment variable:
-
-```env
-VITE_API_BASE_URL=https://domain-backend-cua-ban
+```bash
+mvn -Dbbnt.test.workbook=/duong-dan/BBNT.xlsx -Dbbnt.test.pdf=false test
 ```
 
-### Backend và PDF
+Kiểm thử workbook thật với LibreOffice:
 
-Không đặt Spring Boot/Gotenberg lên Vercel Functions. Chọn một nền tảng chạy container như:
-
-- Google Cloud Run;
-- Render Docker;
-- Railway;
-- VPS.
-
-Backend cần:
-
-```env
-APP_ALLOWED_ORIGINS=https://domain-vercel-cua-ban
-PDF_MODE=gotenberg
-GOTENBERG_BASE_URL=http://dia-chi-gotenberg:3000
+```bash
+mvn -Dbbnt.test.workbook=/duong-dan/BBNT.xlsx -Dbbnt.test.pdf=true -Dtest=RealWorkbookIntegrationTest test
 ```
 
-## 9. Giới hạn V1
+Frontend:
 
-- Chỉ sinh từ các sheet đã tồn tại trong workbook BBNT.
-- Chưa sửa nội dung DM trên giao diện.
-- Chưa tạo ngân hàng mẫu chung.
-- Chưa sinh DOC/DOCX.
-- Chưa đăng nhập, database, phân quyền và lịch sử.
-- File `.xls` phức tạp vẫn phải so sánh PDF với bản in từ Microsoft Excel trước khi nghiệm thu.
+```bash
+cd frontend
+npm ci
+npm test
+npm run lint
+npm run build
+```
+
+## Luồng người dùng
+
+1. Upload workbook BBNT.
+2. Xem thống kê và mở danh mục DM.
+3. Tìm/lọc, chọn cả dòng “Có sheet” và “Chưa có sheet”.
+4. Với dòng chưa có sheet, hệ thống nhận diện Vữa/Bê tông; UNKNOWN yêu cầu chọn tay.
+5. Chọn LM/GM và xem trường “Sẽ tự động điền”, “Sẽ để trống”, warning.
+6. Tạo file xem trước.
+7. Preview PDF nếu engine sẵn sàng; tải Excel/PDF hoặc in.
+
+## Tài liệu
+
+- [Implementation review V4](docs/IMPLEMENTATION_REVIEW_V4.md)
+- [Báo cáo test V4](docs/TEST_REPORT_V4.md)
+- [Danh sách file thay đổi V4](docs/CHANGED_FILES_V4.md)
+- [API V3](docs/API.md)
+- [Kiến trúc Document Plan V3](docs/ARCHITECTURE_DOCUMENT_PLAN_V3.md)
+- [Chứng minh main-only](docs/MAIN_ONLY_PROOF.md)
+- [Báo cáo test V3](docs/TEST_REPORT_V3.md)
+- [Danh sách file thay đổi V3](docs/CHANGED_FILES_V3.md)
+- [Luồng chức năng](docs/FUNCTION_FLOW.md)
+- [Kiến trúc Safe Template](docs/SAFE_TEMPLATE_ARCHITECTURE.md)
+- [Báo cáo kiểm chứng workbook](docs/WORKBOOK_ANALYSIS.md)
+- [Báo cáo test](docs/TEST_REPORT.md)
+
+## Giới hạn còn lại
+
+- Các trường thí nghiệm chưa có nguồn chắc chắn vẫn cần nhập tay hoặc bổ sung cấu hình dự án/nghiệp vụ.
+- `deliveryDate` không tự cộng 7 ngày; chỉ tính khi sau này có cấu hình `deliveryOffsetDays` đã xác nhận.
+- Template registry hiện chọn template hợp lệ theo workbook; giao diện chưa có màn hình quản trị registry lâu dài ngoài lựa chọn family/template của job hiện tại.
+- Shape/OLE đặc thù của Excel có thể nằm ngoài khả năng clone đầy đủ của Apache POI; drawing/logo cơ bản được validator kiểm tra.
+- Gotenberg cần được chạy riêng để kiểm thử engine đó; LibreOffice cục bộ là fallback độc lập.

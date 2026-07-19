@@ -1,182 +1,149 @@
-import { useMemo } from 'react'
-import type { OutputSheet, SystemStatus, WorkItem } from '../types'
+import type { DocumentType, FieldDecision, MaterialFamily, OutputSheet, SystemStatus, WorkItem } from '../types'
 import {
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ExcelIcon,
-  FileIcon,
-  InfoIcon,
-  LightbulbIcon,
-  PdfIcon,
-  TemplateIcon,
+  CheckIcon, ChevronLeftIcon, ChevronRightIcon, ExcelIcon, FileIcon, InfoIcon,
+  LightbulbIcon, PdfIcon, TemplateIcon,
 } from '../icons'
 import { textOrDash } from '../utils'
-
-type OutputGroup = {
-  key: string
-  title: string
-  tone: 'red' | 'blue' | 'gold' | 'purple'
-  items: OutputSheet[]
-}
+import {
+  actionLabel, countSelectedSheets, familyLabel, fieldLabel,
+  hasIncompleteSelection, requiresManualFamily, sheetStatusLabel,
+} from '../uiRules'
 
 export function TemplatesPage({
-  item,
-  outputs,
-  selectedSheets,
-  onToggle,
-  onSelectAll,
-  onBack,
-  onGenerate,
-  status,
-  busy,
+  items, outputsByItem, selectedSheetsByItem, familyByItem, onChangeFamily, onChangeTemplate,
+  onToggle, onSelectAll, onBack, onGenerate, status, busy,
 }: {
-  item: WorkItem
-  outputs: OutputSheet[]
-  selectedSheets: string[]
-  onToggle: (sheet: string) => void
-  onSelectAll: () => void
+  items: WorkItem[]
+  outputsByItem: Record<string, OutputSheet[]>
+  selectedSheetsByItem: Record<string, string[]>
+  familyByItem: Record<string, MaterialFamily>
+  onChangeFamily: (itemNumber: string, family: MaterialFamily) => void
+  onChangeTemplate: (itemNumber: string, documentType: 'LM' | 'GM', sourceTemplate: string) => void
+  onToggle: (itemNumber: string, sheet: string) => void
+  onSelectAll: (itemNumber: string) => void
   onBack: () => void
   onGenerate: () => void
   status: SystemStatus | null
   busy: boolean
 }) {
-  const groups = useMemo(() => groupOutputs(outputs, item.number), [outputs, item.number])
-  const selectedOutputs = outputs.filter((output) => selectedSheets.includes(output.sheetName))
-  const allAvailableSelected = outputs.filter((output) => output.available).length === selectedSheets.length
+  const selectedCount = countSelectedSheets(selectedSheetsByItem)
+  const incomplete = hasIncompleteSelection(items, selectedSheetsByItem)
+  const manualFamilyRequired = items.some((item) => {
+    const selectedFamily = familyByItem[item.itemNumber] ?? item.materialFamily
+    const selected = new Set(selectedSheetsByItem[item.itemNumber] ?? [])
+    return selectedFamily === 'UNKNOWN'
+      && (outputsByItem[item.itemNumber] ?? []).some((output) => selected.has(output.sheetName) && output.generated)
+  })
+  const fatalMissingTemplate = items.some((item) => {
+    const selected = new Set(selectedSheetsByItem[item.itemNumber] ?? [])
+    return (outputsByItem[item.itemNumber] ?? []).some((output) =>
+      selected.has(output.sheetName) && output.availability === 'MISSING_TEMPLATE')
+  })
 
   return (
     <div className="page-stack templates-page">
       <section className="page-heading page-heading-with-back">
-        <button className="back-icon-button" type="button" onClick={onBack} disabled={busy} aria-label="Quay lại danh mục công việc">
-          <ChevronLeftIcon size={23} />
-        </button>
-        <div>
-          <h1>Chọn biểu mẫu</h1>
-          <p>Chọn các sheet cần tạo từ dữ liệu của danh mục DM {item.number}.</p>
-        </div>
+        <button className="back-icon-button" type="button" onClick={onBack} disabled={busy} aria-label="Quay lại danh mục công việc"><ChevronLeftIcon size={23} /></button>
+        <div><h1>Chọn biểu mẫu & kiểm tra dữ liệu</h1><p>MAIN, LM và GM có kế hoạch riêng; mỗi output có thể chọn độc lập.</p></div>
       </section>
 
-      <section className="surface selected-item-surface">
-        <div className="selected-item-title"><FileIcon size={20} /> Tóm tắt công việc đã chọn</div>
-        <div className="selected-item-grid">
-          <Field label="Mã công việc" value={`DM ${item.number}`} />
-          <Field label="Nội dung công việc" value={textOrDash(item.content)} wide />
-          <Field label="Vị trí / Hạng mục" value={textOrDash(item.position)} />
-          <Field label="Số biên bản" value={textOrDash(item.recordNumber)} />
-          <Field label="Thời gian thực hiện" value={textOrDash(item.inspectionTime)} />
-          <Field label="Ngày lấy mẫu" value={textOrDash(item.sampleDate)} />
-        </div>
-      </section>
+      <div className="templates-layout multi-template-layout">
+        <section className="templates-content multi-template-content">
+          {items.map((item) => {
+            const outputs = outputsByItem[item.itemNumber] ?? []
+            const selectedSheets = selectedSheetsByItem[item.itemNumber] ?? []
+            const family = familyByItem[item.itemNumber] ?? item.materialFamily
+            const availableOutputs = outputs.filter((output) => output.available)
+            const allSelected = availableOutputs.length > 0 && availableOutputs.length === selectedSheets.length
+            const selectedOutputs = outputs.filter((output) => selectedSheets.includes(output.sheetName))
+            const decisions = selectedOutputs.flatMap((output) => output.fieldDecisions)
+            const warnings = unique([...item.warnings, ...outputs.flatMap((output) => output.warnings)])
+            const familyLocked = item.hasLmSheet || item.hasGmSheet
+            return (
+              <section className="surface work-template-block" key={item.itemNumber} data-testid={`template-item-${item.itemNumber}`}>
+                <div className="work-template-heading">
+                  <div>
+                    <div className="work-template-title"><FileIcon size={19} /><strong>DM {item.itemNumber}</strong><span className={`generation-badge ${item.hasCompleteSamplePair ? 'existing' : 'clone'}`}>{sheetStatusLabel(item.sheetStatus)}</span></div>
+                    <p>{textOrDash(item.content)} · {textOrDash(item.position)}</p>
+                  </div>
+                  {!item.hasCompleteSamplePair && !familyLocked && (
+                    <label className="family-selector"><span>Loại mẫu</span><select aria-label={`Loại mẫu DM ${item.itemNumber}`} value={family} onChange={(event) => onChangeFamily(item.itemNumber, event.target.value as MaterialFamily)} disabled={busy}>
+                      <option value="UNKNOWN">Chưa xác định</option><option value="VUA">Vữa — LMV/GMV</option><option value="BETONG">Bê tông — LMBT/GMBT</option>
+                    </select></label>
+                  )}
+                  {!item.hasCompleteSamplePair && familyLocked && (
+                    <div className="family-selector family-selector-locked" aria-label={`Loại mẫu khóa DM ${item.itemNumber}`}>
+                      <span>Loại mẫu</span><strong>{familyLabel(family)}</strong><small>Khóa theo LM/GM hiện có</small>
+                    </div>
+                  )}
+                </div>
 
-      <div className="templates-layout">
-        <section className="templates-content">
-          <div className="templates-section-heading">
-            <div>
-              <h2>Chọn biểu mẫu cần tạo</h2>
-              <p>Các biểu mẫu được nhận diện trực tiếp từ tên sheet trong file BBNT.</p>
-            </div>
-            <button className="secondary-button compact" type="button" onClick={onSelectAll}>
-              {allAvailableSelected ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
-            </button>
-          </div>
+                <div className="work-template-meta"><Field label="Số biên bản" value={textOrDash(item.recordNumber)} /><Field label="Ngày lấy mẫu" value={textOrDash(item.sampleDate)} /><Field label="Nhận diện" value={familyLabel(family)} /><Field label="Lý do" value={textOrDash(item.detectionReason)} /></div>
 
-          {groups.map((group) => (
-            <section className="template-group" key={group.key}>
-              <h3>{group.title}</h3>
-              <div className="template-list">
-                {group.items.map((output) => {
-                  const checked = selectedSheets.includes(output.sheetName)
-                  const isPrimary = output.sheetName.trim() === String(item.number)
-                  return (
-                    <button
-                      type="button"
-                      key={output.sheetName}
-                      className={`template-card ${checked ? 'checked' : ''}`}
-                      onClick={() => output.available && onToggle(output.sheetName)}
-                      disabled={!output.available}
-                    >
-                      <span className={`template-checkbox ${checked ? 'checked' : ''}`}>{checked ? <CheckIcon size={16} /> : null}</span>
-                      <span className={`template-file-icon ${group.tone}`}><ExcelIcon size={25} /></span>
-                      <span className="template-main">
-                        <strong>{output.displayName}</strong>
-                        <small>{output.description || 'Biểu mẫu Excel trong workbook BBNT'}</small>
-                        <span className="template-code"><FileIcon size={13} /> Sheet: {output.sheetName}</span>
-                      </span>
-                      <span className={`template-badge ${isPrimary ? 'required' : output.available ? 'recommended' : 'optional'}`}>
-                        {isPrimary ? 'Biểu mẫu chính' : output.available ? 'Sẵn sàng' : 'Không khả dụng'}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            </section>
-          ))}
+                {requiresManualFamily(item, family) && (
+                  <div className="inline-warning"><InfoIcon size={17} /> Không nhận diện chắc chắn vật liệu. MAIN hiện có vẫn có thể chọn và xuất; hãy chọn Vữa hoặc Bê tông nếu cần tạo LM/GM.</div>
+                )}
+                <div className="template-block-toolbar"><div><strong>Biểu mẫu đầu ra</strong><small>Có thể chọn chỉ MAIN, chỉ LM, chỉ GM hoặc mọi tổ hợp hợp lệ.</small></div><button className="secondary-button compact" type="button" onClick={() => onSelectAll(item.itemNumber)} disabled={availableOutputs.length === 0}>{allSelected ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}</button></div>
+                <div className="template-list compact-template-list">
+                  {outputs.map((output) => {
+                    const checked = selectedSheets.includes(output.sheetName)
+                    return (
+                      <div className={`template-card-wrapper ${checked ? 'checked' : ''}`} key={`${output.documentType}-${output.sheetName}`}>
+                        <button type="button" className={`template-card ${checked ? 'checked' : ''}`} onClick={() => output.available && onToggle(item.itemNumber, output.sheetName)} disabled={!output.available} aria-label={`${checked ? 'Bỏ chọn' : 'Chọn'} ${output.displayName}`}>
+                          <span className={`template-checkbox ${checked ? 'checked' : ''}`}>{checked ? <CheckIcon size={16} /> : null}</span>
+                          <span className={`template-file-icon ${output.documentType === 'LM' ? 'blue' : output.documentType === 'GM' ? 'gold' : 'red'}`}><ExcelIcon size={25} /></span>
+                          <span className="template-main"><strong>{output.displayName}</strong><small>{output.description}</small><span className="template-code"><FileIcon size={13} /> Sheet: {output.sheetName}</span>{output.sourceTemplate && <span className="template-source">Nguồn layout: {output.sourceTemplate}</span>}</span>
+                          <span className={`template-badge ${output.generated ? 'recommended' : output.available ? 'required' : 'missing'}`}>{output.generated ? 'Tạo mới an toàn' : output.available ? 'Có sẵn' : 'Thiếu template'}</span>
+                        </button>
+                        {output.generated && output.availableSourceTemplates.length > 1 && (
+                          <label className="source-template-select"><span>Template nguồn {output.documentType}</span><select aria-label={`Template nguồn ${output.documentType} DM ${item.itemNumber}`} value={output.sourceTemplate ?? ''} onChange={(event) => onChangeTemplate(item.itemNumber, output.documentType as 'LM' | 'GM', event.target.value)} disabled={busy}>
+                            {output.availableSourceTemplates.map((template) => <option key={template} value={template}>{template}{template === output.sourceTemplate ? ' — đang dùng' : ''}</option>)}
+                          </select></label>
+                        )}
+                      </div>
+                    )
+                  })}
+                  {outputs.length === 0 && <div className="inline-warning"><InfoIcon size={17} /> Chưa có output LM/GM phù hợp. MAIN vẫn có thể xuất nếu workbook đã có; nếu không, hãy chọn loại vật liệu hoặc kiểm tra template registry.</div>}
+                </div>
 
-          <div className="templates-note"><InfoIcon size={17} /> Chỉ các sheet được đánh dấu sẵn sàng mới có thể đưa vào file kết quả.</div>
+                {decisions.length > 0 && <DecisionTable decisions={decisions} />}
+                {warnings.length > 0 && <div className="item-warning-list">{warnings.map((warning) => <p key={warning}><InfoIcon size={14} /> {warning}</p>)}</div>}
+              </section>
+            )
+          })}
+          <div className="templates-note"><InfoIcon size={17} /> Cảnh báo dữ liệu không chặn xuất; thiếu family hoặc template cần thiết mới chặn.</div>
         </section>
 
-        <aside className="selection-column">
+        <aside className="selection-column sticky-selection-column">
           <section className="surface selection-summary">
             <div className="summary-title"><TemplateIcon size={20} /><h2>Tóm tắt lựa chọn</h2></div>
-            <strong className="summary-selected-count">Đã chọn {selectedSheets.length} biểu mẫu</strong>
-
-            <div className="selected-template-list">
-              {selectedOutputs.length > 0 ? selectedOutputs.map((output, index) => (
-                <div className="selected-template-item" key={output.sheetName}>
-                  <span>{index + 1}</span>
-                  <div><strong>{output.displayName}</strong><small>{output.sheetName}</small></div>
-                </div>
-              )) : <p className="empty-selection">Chưa chọn biểu mẫu nào.</p>}
-            </div>
-
-            <div className="summary-divider" />
-            <h3>Thông tin bổ sung</h3>
-            <div className="summary-info-row"><span>Tổng số sheet</span><strong>{selectedSheets.length}</strong></div>
-            <div className="summary-info-row"><span>Định dạng xuất</span><strong>{status?.pdfAvailable ? 'Excel + PDF' : 'Excel'}</strong></div>
-            <div className="summary-info-row"><span>Ngôn ngữ</span><strong>Tiếng Việt</strong></div>
-
-            <div className="selection-tip"><LightbulbIcon size={20} /><p>Có thể thay đổi lựa chọn trước khi tạo file xem trước.</p></div>
-            {!status?.pdfAvailable && <p className="pdf-hint">Preview PDF chưa sẵn sàng: {status?.message ?? 'chưa kết nối bộ chuyển đổi PDF'}.</p>}
+            <strong className="summary-selected-count">{items.length} dòng DM · {selectedCount} sheet</strong>
+            <div className="selected-template-list">{items.map((item, index) => {
+              const outputs = outputsByItem[item.itemNumber] ?? []
+              const selected = new Set(selectedSheetsByItem[item.itemNumber] ?? [])
+              const labels = outputs.filter((output) => selected.has(output.sheetName)).map((output) => `${output.documentType} ${output.generated ? 'clone' : 'có sẵn'}`)
+              return <div className="selected-template-item" key={item.itemNumber}><span>{index + 1}</span><div><strong>DM {item.itemNumber}</strong><small>{labels.join(' · ') || 'Chưa chọn output'}</small></div></div>
+            })}</div>
+            <div className="summary-divider" /><div className="summary-info-row"><span>Định dạng</span><strong>{status?.pdfAvailable ? 'Excel + PDF' : 'Excel'}</strong></div><div className="summary-info-row"><span>Dữ liệu clone</span><strong>Chỉ CERTAIN</strong></div>
+            <div className="selection-tip"><LightbulbIcon size={20} /><p>FieldDecision điều khiển trực tiếp việc điền/xóa ô; mác, kích thước, tuổi mẫu, LAS và ngày giao không chắc chắn đều blank thực sự.</p></div>
+            {!status?.pdfAvailable && <p className="pdf-hint">PDF chưa sẵn sàng: {status?.message ?? 'chưa kết nối bộ chuyển đổi PDF'}.</p>}
           </section>
-
-          <button className="secondary-button summary-back-button" type="button" onClick={onBack} disabled={busy}>
-            <ChevronLeftIcon size={18} /> Quay lại
-          </button>
-          <button className="primary-button generate-button" type="button" onClick={onGenerate} disabled={selectedSheets.length === 0 || busy}>
-            <PdfIcon size={18} /> {busy ? 'Đang tạo hồ sơ…' : 'Tạo file xem trước'} <ChevronRightIcon size={18} />
-          </button>
-          <small className="generate-hint">Hệ thống tạo Excel và PDF preview nếu dịch vụ PDF sẵn sàng.</small>
+          <button className="secondary-button summary-back-button" type="button" onClick={onBack} disabled={busy}><ChevronLeftIcon size={18} /> Quay lại</button>
+          <button className="primary-button generate-button" type="button" onClick={onGenerate} disabled={selectedCount === 0 || incomplete || manualFamilyRequired || fatalMissingTemplate || busy}><PdfIcon size={18} /> {busy ? 'Đang tạo hồ sơ…' : 'Tạo file xem trước'} <ChevronRightIcon size={18} /></button>
+          {incomplete && <small className="generate-hint warning-text">Mỗi dòng DM phải có ít nhất một output được chọn.</small>}
+          {manualFamilyRequired && <small className="generate-hint warning-text">Output LM/GM được chọn nhưng loại vật liệu chưa xác định.</small>}
+          {fatalMissingTemplate && <small className="generate-hint warning-text">Không tìm thấy template tương thích cho output cần tạo.</small>}
         </aside>
       </div>
     </div>
   )
 }
 
-function Field({ label, value, wide = false }: { label: string; value: string; wide?: boolean }) {
-  return <div className={`selected-field ${wide ? 'wide' : ''}`}><span>{label}</span><strong>{value}</strong></div>
+function DecisionTable({ decisions }: { decisions: FieldDecision[] }) {
+  const rows = uniqueDecisions(decisions)
+  return <div className="field-decision-table-wrap"><h3>Chi tiết trường dữ liệu</h3><div className="data-table-wrap"><table className="data-table field-decision-table"><thead><tr><th>Biểu mẫu</th><th>Trường</th><th>Nguồn</th><th>Giá trị dự kiến</th><th>Hành động</th></tr></thead><tbody>{rows.map((decision) => <tr key={`${decision.documentType}-${decision.fieldName}-${decision.action}`}><td><span className="document-type-pill">{documentTypeLabel(decision.documentType)}</span></td><td><strong>{fieldLabel(decision.fieldName)}</strong><small className="decision-reason">{decision.reason}</small></td><td>{textOrDash(decision.source)}</td><td>{decision.value ? decision.value : '—'}</td><td><span className={`decision-action action-${decision.action.toLowerCase()}`}>{actionLabel(decision.action)}</span></td></tr>)}</tbody></table></div></div>
 }
-
-function groupOutputs(outputs: OutputSheet[], workItemNumber: number): OutputGroup[] {
-  const buckets: Record<string, OutputSheet[]> = {
-    main: [],
-    sample: [],
-    delivery: [],
-    other: [],
-  }
-
-  outputs.forEach((output) => {
-    const normalized = `${output.sheetName} ${output.displayName} ${output.type}`.toLocaleLowerCase('vi-VN')
-    if (output.sheetName.trim() === String(workItemNumber)) buckets.main.push(output)
-    else if (normalized.includes('lmv') || normalized.includes('lấy mẫu') || normalized.includes('lay mau')) buckets.sample.push(output)
-    else if (normalized.includes('gmv') || normalized.includes('giao mẫu') || normalized.includes('giao mau')) buckets.delivery.push(output)
-    else buckets.other.push(output)
-  })
-
-  return [
-    { key: 'main', title: 'Biểu mẫu chính', tone: 'red' as const, items: buckets.main },
-    { key: 'sample', title: 'Phiếu lấy mẫu', tone: 'blue' as const, items: buckets.sample },
-    { key: 'delivery', title: 'Phiếu giao mẫu', tone: 'gold' as const, items: buckets.delivery },
-    { key: 'other', title: 'Biểu mẫu liên quan khác', tone: 'purple' as const, items: buckets.other },
-  ].filter((group) => group.items.length > 0)
-}
+function documentTypeLabel(type: DocumentType) { return type === 'MAIN' ? 'MAIN' : type === 'LM' ? 'LM' : type === 'GM' ? 'GM' : '—' }
+function unique(values: string[]) { return Array.from(new Set(values.filter(Boolean))) }
+function uniqueDecisions(decisions: FieldDecision[]) { const seen = new Set<string>(); return decisions.filter((decision) => { const key = `${decision.documentType}|${decision.fieldName}|${decision.action}|${decision.value ?? ''}`; if (seen.has(key)) return false; seen.add(key); return true }) }
+function Field({ label, value }: { label: string; value: string }) { return <div className="selected-field"><span>{label}</span><strong title={value}>{value}</strong></div> }

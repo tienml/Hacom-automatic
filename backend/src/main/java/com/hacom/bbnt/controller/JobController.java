@@ -1,13 +1,24 @@
 package com.hacom.bbnt.controller;
 
-import com.hacom.bbnt.dto.*;
+import com.hacom.bbnt.dto.AnalyzeResponse;
+import com.hacom.bbnt.dto.GenerateRequest;
+import com.hacom.bbnt.dto.GenerateResponse;
+import com.hacom.bbnt.dto.OutputSheetDto;
 import com.hacom.bbnt.model.JobContext;
+import com.hacom.bbnt.model.MaterialFamily;
 import com.hacom.bbnt.service.DocumentGenerationService;
 import com.hacom.bbnt.service.ExcelAnalysisService;
 import com.hacom.bbnt.service.OutputSheetService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
@@ -37,24 +48,50 @@ public class JobController {
         int withSampleCount = (int) context.workItems().stream()
                 .filter(item -> item.sampleDate() != null && !item.sampleDate().isBlank())
                 .count();
+        int existingCount = (int) context.workItems().stream()
+                .filter(item -> item.hasOutputSheets())
+                .count();
+        int cloneCount = (int) context.workItems().stream()
+                .filter(item -> (item.lmPlan() != null && item.lmPlan().generationMode() == com.hacom.bbnt.model.GenerationMode.CLONE_TEMPLATE)
+                        || (item.gmPlan() != null && item.gmPlan().generationMode() == com.hacom.bbnt.model.GenerationMode.CLONE_TEMPLATE))
+                .count();
+        int mainOnlyCount = (int) context.workItems().stream().filter(item -> item.sheetStatus() == com.hacom.bbnt.model.WorkItemSheetStatus.MAIN_ONLY).count();
+        int completePairCount = (int) context.workItems().stream().filter(item -> item.hasCompleteSamplePair()).count();
+        int partialPairCount = (int) context.workItems().stream().filter(item -> item.hasPartialSamplePair()).count();
+        int unknownCount = (int) context.workItems().stream()
+                .filter(item -> item.materialFamily() == MaterialFamily.UNKNOWN)
+                .count();
         return new AnalyzeResponse(
                 context.id(),
                 context.originalFileName(),
                 context.dmSheetName(),
                 context.project(),
+                context.analysisWarnings(),
                 context.workItems().size(),
                 outputSheetCount,
                 withSampleCount,
                 context.workItems().size() - withSampleCount,
+                existingCount,
+                cloneCount,
+                mainOnlyCount,
+                completePairCount,
+                partialPairCount,
+                unknownCount,
                 context.workItems(),
                 context.createdAt(),
                 context.expiresAt()
         );
     }
 
-    @GetMapping("/{jobId}/work-items/{number}/outputs")
-    public List<OutputSheetDto> outputs(@PathVariable String jobId, @PathVariable int number) {
-        return outputSheetService.outputs(jobId, number);
+    @GetMapping("/{jobId}/work-items/{itemNumber}/outputs")
+    public List<OutputSheetDto> outputs(
+            @PathVariable String jobId,
+            @PathVariable String itemNumber,
+            @RequestParam(required = false) MaterialFamily materialFamily,
+            @RequestParam(required = false) String lmTemplateSheet,
+            @RequestParam(required = false) String gmTemplateSheet
+    ) {
+        return outputSheetService.outputs(jobId, itemNumber, materialFamily, lmTemplateSheet, gmTemplateSheet);
     }
 
     @PostMapping("/{jobId}/generate")
@@ -66,7 +103,7 @@ public class JobController {
         long pdfSize = document.hasPdf() ? safeSize(document.pdfPath()) : 0L;
         return new GenerateResponse(
                 document.id(),
-                document.workItemNumber(),
+                document.workItemNumbers(),
                 document.selectedSheets(),
                 base + "/excel",
                 document.hasPdf() ? base + "/pdf?disposition=inline" : null,
@@ -77,6 +114,7 @@ public class JobController {
                 document.hasPdf() ? document.pdfPath().getFileName().toString() : null,
                 excelSize,
                 pdfSize,
+                document.warnings(),
                 document.createdAt(),
                 document.expiresAt()
         );

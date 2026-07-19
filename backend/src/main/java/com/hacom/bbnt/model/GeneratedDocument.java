@@ -7,10 +7,11 @@ import java.util.List;
 public record GeneratedDocument(
         String id,
         String jobId,
-        int workItemNumber,
+        List<String> workItemNumbers,
         List<String> selectedSheets,
         Path excelPath,
         Path pdfPath,
+        List<String> warnings,
         Instant createdAt,
         Instant expiresAt
 ) {
