@@ -11,6 +11,7 @@ public record WorkItemDto(
         String localOrder,
         String content,
         String position,
+        String majorCategory,
         String inspectionTime,
         String recordNumber,
         String sampleDate,

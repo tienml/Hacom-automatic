@@ -43,6 +43,7 @@ public class WorkItemPlanningService {
             String localOrder,
             String content,
             String position,
+            String majorCategory,
             String inspectionTime,
             String recordNumber,
             String sampleDate,
@@ -61,7 +62,7 @@ public class WorkItemPlanningService {
         TemplatePair recommendedPair = family == MaterialFamily.UNKNOWN ? null : registry.pairFor(family);
 
         WorkItemDto shell = shell(
-                itemNumber, localOrder, content, position, inspectionTime, recordNumber, sampleDate, excelRow,
+                itemNumber, localOrder, content, position, majorCategory, inspectionTime, recordNumber, sampleDate, excelRow,
                 existing, existingByType, classification, family, recommendedPair, registry, planningWarnings
         );
         DocumentPlanDto mainPlan = mainPlan(existingByType.main, family);
@@ -102,6 +103,7 @@ public class WorkItemPlanningService {
                 localOrder,
                 content,
                 position,
+                majorCategory,
                 inspectionTime,
                 recordNumber,
                 blankToNull(sampleDate),
@@ -135,6 +137,7 @@ public class WorkItemPlanningService {
             String localOrder,
             String content,
             String position,
+            String majorCategory,
             String inspectionTime,
             String recordNumber,
             String sampleDate,
@@ -148,7 +151,7 @@ public class WorkItemPlanningService {
             List<String> analysisWarnings
     ) {
         return new WorkItemDto(
-                itemNumber, localOrder, content, position, inspectionTime, recordNumber, blankToNull(sampleDate), excelRow,
+                itemNumber, localOrder, content, position, majorCategory, inspectionTime, recordNumber, blankToNull(sampleDate), excelRow,
                 !existing.isEmpty(), existing, byType.hasMain(), byType.hasLm(), byType.hasGm(),
                 byType.hasLm() && byType.hasGm(), byType.hasLm() ^ byType.hasGm(),
                 status(byType, effectiveFamily), GenerationMode.EXISTING_SHEET,

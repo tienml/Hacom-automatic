@@ -27,19 +27,30 @@ describe('TemplatesPage output-level selection', () => {
     expect(screen.getAllByText('Tạo mới an toàn')).toHaveLength(2)
     expect(screen.getByText(/MAIN có sẵn · LM clone · GM clone/)).toBeInTheDocument()
   })
-  it('shows detailed FieldDecision values and CLEAR action', () => {
+  it('hides CERTAIN fields (auto-filled) and only shows UNCERTAIN/UNKNOWN fields needing review', () => {
     renderPage()
-    expect(screen.getAllByText('Vị trí').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('DM.columnD').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Tầng 2').length).toBeGreaterThan(0)
+    // 'location' decision is CERTAIN -> auto-filled, must NOT clutter the table.
+    expect(screen.queryByText('Vị trí')).not.toBeInTheDocument()
+    expect(screen.queryByText('DM.columnD')).not.toBeInTheDocument()
+    // 'specimenSize' decision is UNCERTAIN -> must be shown for the user to review/fill.
     expect(screen.getAllByText('Kích thước mẫu').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Để trống').length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/trường đã tự động điền chắc chắn/).length).toBeGreaterThan(0)
   })
-  it('changes source template independently', async () => {
+  it('shows only the resolved template family (e.g. LMV), not raw instance names like "1.LMV (111)"', () => {
+    renderPage()
+    const select = screen.getByLabelText('Biểu mẫu phụ LM DM 150') as HTMLSelectElement
+    const optionLabels = Array.from(select.options).map((option) => option.value)
+    expect(optionLabels).toContain('LMV')
+    expect(optionLabels).not.toContain('1.LMV (111)')
+    expect(optionLabels).toContain('__NONE__')
+  })
+  it('choosing "Không sinh biểu mẫu phụ" unchecks that output', async () => {
     const user = userEvent.setup()
-    const { props } = renderPage()
-    await user.selectOptions(screen.getByLabelText('Template nguồn LM DM 150'), '1.LMV (114)')
-    expect(props.onChangeTemplate).toHaveBeenCalledWith('150', 'LM', '1.LMV (114)')
+    const { props, outputs } = renderPage()
+    const lmOutput = outputs[1]
+    await user.selectOptions(screen.getByLabelText('Biểu mẫu phụ LM DM 150'), '__NONE__')
+    expect(props.onToggle).toHaveBeenCalledWith('150', lmOutput.sheetName)
   })
   it('requires family for UNKNOWN but warnings do not disable a valid export', () => {
     const unknown = workItem({ materialFamily: 'UNKNOWN', sheetStatus: 'UNKNOWN_MATERIAL', hasMainSheet: false, existingSheetNames: [], hasOutputSheets: false })

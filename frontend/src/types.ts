@@ -55,6 +55,7 @@ export type WorkItem = {
   localOrder: string
   content: string
   position: string
+  majorCategory: string | null
   inspectionTime: string
   recordNumber: string
   sampleDate: string | null

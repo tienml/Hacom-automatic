@@ -40,6 +40,9 @@ import java.util.regex.Pattern;
 public class ExcelAnalysisService {
     private static final long MAX_FILE_SIZE = 50L * 1024 * 1024;
     private static final Pattern ITEM_TEXT = Pattern.compile("^([0-9]+[A-Za-z]?)$");
+    private static final Pattern LATIN_LABEL = Pattern.compile("^[A-Za-z]{1,3}$");
+    private static final Pattern ROMAN_NUMERAL = Pattern.compile(
+            "^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$");
 
     private final TemporaryStore store;
     private final SheetNameParser sheetNameParser;
@@ -321,11 +324,17 @@ public class ExcelAnalysisService {
     ) {
         List<WorkItemDto> items = new ArrayList<>();
         Set<String> seen = new HashSet<>();
+        String currentMajorCategory = null;
         for (int rowIndex = 0; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row == null) continue;
             String itemNumber = itemNumber(row.getCell(mapping.itemNumber()), formatter, evaluator);
-            if (itemNumber == null || !seen.add(itemNumber)) continue;
+            if (itemNumber == null) {
+                String detectedCategory = detectMajorCategoryHeader(row, mapping, formatter, evaluator);
+                if (detectedCategory != null) currentMajorCategory = detectedCategory;
+                continue;
+            }
+            if (!seen.add(itemNumber)) continue;
 
             String content = cellText(row.getCell(mapping.content()), formatter, evaluator).trim();
             String position = cellText(row.getCell(mapping.position()), formatter, evaluator).trim();
@@ -341,6 +350,7 @@ public class ExcelAnalysisService {
                     localOrder,
                     content,
                     position,
+                    currentMajorCategory,
                     inspectionTime,
                     recordNumber,
                     sampleDate,
@@ -353,6 +363,28 @@ public class ExcelAnalysisService {
         }
         items.sort(Comparator.comparing(WorkItemDto::itemNumber, this::compareItemNumbers));
         return items;
+    }
+
+    /**
+     * DM chứa các dòng nhóm xen giữa dữ liệu công việc: cột số danh mục (A) để trống, cột STT (B) chỉ có
+     * nhãn ngắn, và cột nội dung (C) chứa tên nhóm. Có 2 cấp:
+     *  - "Hạng mục lớn": nhãn STT là một hoặc vài chữ cái La Tinh KHÔNG PHẢI số La Mã hợp lệ (VD: A, B, E, G, H, K...).
+     *  - "Tầng / khu vực" (nhóm con): nhãn STT là số La Mã hợp lệ (I, II, III, IV, V...), hoặc chữ cái trùng
+     *    với ký tự số La Mã (I, V, X, L, C, D, M) dùng làm nhãn phụ — nhóm con không đổi hạng mục lớn hiện tại.
+     * Trường "Vị trí" (cột D) của từng dòng công việc đã đủ chi tiết cho tầng/khu vực nên ở đây chỉ cần
+     * theo dõi hạng mục lớn.
+     */
+    private String detectMajorCategoryHeader(Row row, ColumnMapping mapping, DataFormatter formatter, FormulaEvaluator evaluator) {
+        String label = cellText(row.getCell(mapping.localOrder()), formatter, evaluator).trim();
+        String content = cellText(row.getCell(mapping.content()), formatter, evaluator).trim();
+        if (label.isBlank() || content.isBlank()) return null;
+        if (!LATIN_LABEL.matcher(label).matches()) return null;
+        if (isRomanNumeral(label)) return null;
+        return content;
+    }
+
+    private boolean isRomanNumeral(String label) {
+        return ROMAN_NUMERAL.matcher(label.toUpperCase(Locale.ROOT)).matches();
     }
 
     private Map<String, List<String>> findOutputSheets(Workbook workbook) {

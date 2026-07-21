@@ -64,9 +64,10 @@ function App() {
   }
 
   function toggleItem(item: WorkItem) {
+    // Chỉ cho phép chọn 1 danh mục công việc tại một thời điểm (chọn kiểu radio).
     setSelectedItems((current) => current.some((value) => value.itemNumber === item.itemNumber)
-      ? current.filter((value) => value.itemNumber !== item.itemNumber)
-      : [...current, item])
+      ? []
+      : [item])
   }
 
   async function openTemplates() {

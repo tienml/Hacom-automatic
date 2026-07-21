@@ -95,9 +95,16 @@ export function TemplatesPage({
                           <span className="template-main"><strong>{output.displayName}</strong><small>{output.description}</small><span className="template-code"><FileIcon size={13} /> Sheet: {output.sheetName}</span>{output.sourceTemplate && <span className="template-source">Nguồn layout: {output.sourceTemplate}</span>}</span>
                           <span className={`template-badge ${output.generated ? 'recommended' : output.available ? 'required' : 'missing'}`}>{output.generated ? 'Tạo mới an toàn' : output.available ? 'Có sẵn' : 'Thiếu template'}</span>
                         </button>
-                        {output.generated && output.availableSourceTemplates.length > 1 && (
-                          <label className="source-template-select"><span>Template nguồn {output.documentType}</span><select aria-label={`Template nguồn ${output.documentType} DM ${item.itemNumber}`} value={output.sourceTemplate ?? ''} onChange={(event) => onChangeTemplate(item.itemNumber, output.documentType as 'LM' | 'GM', event.target.value)} disabled={busy}>
-                            {output.availableSourceTemplates.map((template) => <option key={template} value={template}>{template}{template === output.sourceTemplate ? ' — đang dùng' : ''}</option>)}
+                        {output.generated && (
+                          <label className="source-template-select"><span>Biểu mẫu phụ</span><select aria-label={`Biểu mẫu phụ ${output.documentType} DM ${item.itemNumber}`} value={checked ? familyCodeOf(output.sourceTemplate) : NO_AUX_FORM} onChange={(event) => {
+                            const nextCode = event.target.value
+                            if (nextCode === NO_AUX_FORM) { if (checked) onToggle(item.itemNumber, output.sheetName); return }
+                            if (!checked) onToggle(item.itemNumber, output.sheetName)
+                            const nextTemplate = pickTemplateForCode(output.availableSourceTemplates, nextCode, output.sourceTemplate)
+                            if (nextTemplate && nextTemplate !== output.sourceTemplate) onChangeTemplate(item.itemNumber, output.documentType as 'LM' | 'GM', nextTemplate)
+                          }} disabled={busy}>
+                            {templateCodeOptions(output.availableSourceTemplates).map((code) => <option key={code} value={code}>{code}</option>)}
+                            <option value={NO_AUX_FORM}>Không sinh biểu mẫu phụ</option>
                           </select></label>
                         )}
                       </div>
@@ -140,10 +147,34 @@ export function TemplatesPage({
 }
 
 function DecisionTable({ decisions }: { decisions: FieldDecision[] }) {
-  const rows = uniqueDecisions(decisions)
-  return <div className="field-decision-table-wrap"><h3>Chi tiết trường dữ liệu</h3><div className="data-table-wrap"><table className="data-table field-decision-table"><thead><tr><th>Biểu mẫu</th><th>Trường</th><th>Nguồn</th><th>Giá trị dự kiến</th><th>Hành động</th></tr></thead><tbody>{rows.map((decision) => <tr key={`${decision.documentType}-${decision.fieldName}-${decision.action}`}><td><span className="document-type-pill">{documentTypeLabel(decision.documentType)}</span></td><td><strong>{fieldLabel(decision.fieldName)}</strong><small className="decision-reason">{decision.reason}</small></td><td>{textOrDash(decision.source)}</td><td>{decision.value ? decision.value : '—'}</td><td><span className={`decision-action action-${decision.action.toLowerCase()}`}>{actionLabel(decision.action)}</span></td></tr>)}</tbody></table></div></div>
+  const allRows = uniqueDecisions(decisions)
+  const autoFilledCount = allRows.filter((decision) => decision.certainty === 'CERTAIN').length
+  const rows = allRows.filter((decision) => decision.certainty !== 'CERTAIN')
+  return <div className="field-decision-table-wrap">
+    <h3>Chi tiết trường dữ liệu</h3>
+    {autoFilledCount > 0 && <p className="decision-autofill-note"><CheckIcon size={13} /> {autoFilledCount} trường đã tự động điền chắc chắn (không cần xem lại).</p>}
+    {rows.length > 0 ? (
+      <div className="data-table-wrap"><table className="data-table field-decision-table"><thead><tr><th>Biểu mẫu</th><th>Trường</th><th>Nguồn</th><th>Giá trị dự kiến</th><th>Hành động</th></tr></thead><tbody>{rows.map((decision) => <tr key={`${decision.documentType}-${decision.fieldName}-${decision.action}`}><td><span className="document-type-pill">{documentTypeLabel(decision.documentType)}</span></td><td><strong>{fieldLabel(decision.fieldName)}</strong><small className="decision-reason">{decision.reason}</small></td><td>{textOrDash(decision.source)}</td><td>{decision.value ? decision.value : '—'}</td><td><span className={`decision-action action-${decision.action.toLowerCase()}`}>{actionLabel(decision.action)}</span></td></tr>)}</tbody></table></div>
+    ) : <p className="decision-autofill-note all-certain"><CheckIcon size={13} /> Mọi trường đều đã xác định chắc chắn, không cần người dùng điền thêm.</p>}
+  </div>
 }
 function documentTypeLabel(type: DocumentType) { return type === 'MAIN' ? 'MAIN' : type === 'LM' ? 'LM' : type === 'GM' ? 'GM' : '—' }
 function unique(values: string[]) { return Array.from(new Set(values.filter(Boolean))) }
 function uniqueDecisions(decisions: FieldDecision[]) { const seen = new Set<string>(); return decisions.filter((decision) => { const key = `${decision.documentType}|${decision.fieldName}|${decision.action}|${decision.value ?? ''}`; if (seen.has(key)) return false; seen.add(key); return true }) }
 function Field({ label, value }: { label: string; value: string }) { return <div className="selected-field"><span>{label}</span><strong title={value}>{value}</strong></div> }
+
+const NO_AUX_FORM = '__NONE__'
+/** Trích mã họ biểu mẫu (VD: "1.LMBT (141)" -> "LMBT") để không bắt người dùng chọn từng bản instance cụ thể. */
+function familyCodeOf(templateName: string | null) {
+  if (!templateName) return NO_AUX_FORM
+  const match = templateName.match(/\.([A-Za-z]+)/)
+  return match ? match[1].toUpperCase() : templateName
+}
+function templateCodeOptions(templates: string[]) {
+  return unique(templates.map((template) => familyCodeOf(template)))
+}
+/** Chọn 1 template cụ thể đại diện cho mã họ được chọn: ưu tiên giữ nguyên nếu đang dùng thuộc đúng họ, ngược lại lấy bản đầu tiên. */
+function pickTemplateForCode(templates: string[], code: string, current: string | null) {
+  if (current && familyCodeOf(current) === code) return current
+  return templates.find((template) => familyCodeOf(template) === code) ?? null
+}

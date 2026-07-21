@@ -20,7 +20,7 @@ export function plan(overrides: Partial<DocumentPlan> = {}): DocumentPlan {
 
 export function workItem(overrides: Partial<WorkItem> = {}): WorkItem {
   return {
-    itemNumber: '150', localOrder: '11', content: 'Chất lượng vữa xây', position: 'Tầng 2',
+    itemNumber: '150', localOrder: '11', content: 'Chất lượng vữa xây', position: 'Tầng 2', majorCategory: 'HẠNG MỤC XÂY TƯỜNG',
     inspectionTime: '10:00 01/07/24', recordNumber: '1503/CB/NTCV/150', sampleDate: '02/07/24', excelRow: 150,
     hasOutputSheets: true, existingSheetNames: ['150'], hasMainSheet: true, hasLmSheet: false, hasGmSheet: false,
     hasCompleteSamplePair: false, hasPartialSamplePair: false, sheetStatus: 'MAIN_ONLY', generationMode: 'CLONE_TEMPLATE',
