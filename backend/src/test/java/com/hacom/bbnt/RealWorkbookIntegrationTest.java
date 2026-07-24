@@ -104,7 +104,7 @@ class RealWorkbookIntegrationTest {
         assertThat(outputs).allSatisfy(output -> assertThat(output.available()).isTrue());
 
         List<GenerateOutputSelection> selected = outputs.stream().map(output -> new GenerateOutputSelection(
-                output.sheetName(), output.documentType(), output.generationMode(), output.sourceTemplate()
+                output.sheetName(), output.documentType(), output.generationMode(), output.sourceTemplate(), null
         )).toList();
         var generated = services.generation().generate(context.id(), new GenerateRequest(
                 List.of(new GenerateSelection(mainOnly.itemNumber(), selected, mainOnly.materialFamily())),

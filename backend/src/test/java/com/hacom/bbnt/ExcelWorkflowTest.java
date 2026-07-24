@@ -412,11 +412,11 @@ class ExcelWorkflowTest {
     }
 
     private GenerateOutputSelection existingOutput(String sheetName, DocumentType type) {
-        return new GenerateOutputSelection(sheetName, type, GenerationMode.EXISTING_SHEET, null);
+        return new GenerateOutputSelection(sheetName, type, GenerationMode.EXISTING_SHEET, null, null);
     }
 
     private GenerateOutputSelection cloneOutput(String sheetName, DocumentType type, String template) {
-        return new GenerateOutputSelection(sheetName, type, GenerationMode.CLONE_TEMPLATE, template);
+        return new GenerateOutputSelection(sheetName, type, GenerationMode.CLONE_TEMPLATE, template, null);
     }
 
     private MockMultipartFile upload(byte[] bytes, String name) {
