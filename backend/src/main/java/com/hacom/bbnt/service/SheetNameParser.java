@@ -45,10 +45,11 @@ public class SheetNameParser {
     }
 
     public String plannedSheetName(DocumentType type, MaterialFamily family, String itemNumber) {
+        if (type == DocumentType.MAIN) return normalizeItemNumber(itemNumber);
         String prefix = switch (type) {
             case LM -> family == MaterialFamily.BETONG ? "1.LMBT" : "1.LMV";
             case GM -> family == MaterialFamily.BETONG ? "1.GMBT" : "1.GMV";
-            default -> throw new IllegalArgumentException("Chỉ hỗ trợ tên sheet LM/GM.");
+            default -> throw new IllegalArgumentException("Chỉ hỗ trợ tên sheet MAIN/LM/GM.");
         };
         return prefix + " (" + normalizeItemNumber(itemNumber) + ")";
     }

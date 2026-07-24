@@ -65,7 +65,7 @@ public class WorkItemPlanningService {
                 itemNumber, localOrder, content, position, majorCategory, inspectionTime, recordNumber, sampleDate, excelRow,
                 existing, existingByType, classification, family, recommendedPair, registry, planningWarnings
         );
-        DocumentPlanDto mainPlan = mainPlan(existingByType.main, family);
+        DocumentPlanDto mainPlan = mainPlan(shell, existingByType.main, family, registry, project);
         DocumentPlanDto lmPlan = samplePlan(shell, DocumentType.LM, existingByType.lm, family, recommendedPair, registry, project);
         DocumentPlanDto gmPlan = samplePlan(shell, DocumentType.GM, existingByType.gm, family, recommendedPair, registry, project);
 
@@ -161,14 +161,29 @@ public class WorkItemPlanningService {
         );
     }
 
-    private DocumentPlanDto mainPlan(String existingSheet, MaterialFamily family) {
-        if (existingSheet == null) {
-            return new DocumentPlanDto(DocumentType.MAIN, OutputAvailability.NOT_APPLICABLE, null,
-                    null, null, family, null, List.of(), List.of(),
-                    List.of("Ứng dụng không tự sinh sheet MAIN khi workbook chưa có."));
+    private DocumentPlanDto mainPlan(
+            WorkItemDto item,
+            String existingSheet,
+            MaterialFamily family,
+            TemplateRegistry registry,
+            ProjectSummary project
+    ) {
+        if (existingSheet != null) {
+            return new DocumentPlanDto(DocumentType.MAIN, OutputAvailability.EXISTING, GenerationMode.EXISTING_SHEET,
+                    existingSheet, existingSheet, family, null, List.of(), List.of(), List.of());
         }
-        return new DocumentPlanDto(DocumentType.MAIN, OutputAvailability.EXISTING, GenerationMode.EXISTING_SHEET,
-                existingSheet, existingSheet, family, null, List.of(), List.of(), List.of());
+        String plannedName = sheetNameParser.plannedSheetName(DocumentType.MAIN, family, item.itemNumber());
+        String sourceTemplate = registry.bestMainTemplate();
+        TemplateProfile profile = sourceTemplate == null ? null : registry.profileFor(sourceTemplate);
+        if (sourceTemplate == null || profile == null) {
+            return new DocumentPlanDto(DocumentType.MAIN, OutputAvailability.MISSING_TEMPLATE, null,
+                    null, plannedName, family, null, registry.mainTemplates(), List.of(),
+                    List.of("Không có sheet MAIN nào trong workbook đủ điều kiện làm layout nguồn."));
+        }
+        List<FieldDecisionDto> decisions = fieldDecisionService.decisions(item, project, profile, DocumentType.MAIN);
+        return new DocumentPlanDto(DocumentType.MAIN, OutputAvailability.GENERATABLE, GenerationMode.CLONE_TEMPLATE,
+                null, plannedName, family, sourceTemplate, registry.mainTemplates(),
+                decisions, List.of("MAIN được tạo mới từ layout " + sourceTemplate + "; chỉ điền dữ liệu CERTAIN."));
     }
 
     private DocumentPlanDto samplePlan(

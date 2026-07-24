@@ -24,6 +24,7 @@ function App() {
   const [outputsByItem, setOutputsByItem] = useState<Record<string, OutputSheet[]>>({})
   const [selectedSheetsByItem, setSelectedSheetsByItem] = useState<Record<string, string[]>>({})
   const [familyByItem, setFamilyByItem] = useState<Record<string, MaterialFamily>>({})
+  const [fieldOverridesByItem, setFieldOverridesByItem] = useState<Record<string, Record<string, string>>>({})
   const [result, setResult] = useState<GenerateResponse | null>(null)
   const [status, setStatus] = useState<SystemStatus | null>(null)
   const [busy, setBusy] = useState(false)
@@ -137,6 +138,15 @@ function App() {
     void refreshOutputs(itemNumber, family, lmTemplate, gmTemplate)
   }
 
+  function updateFieldOverride(itemNumber: string, fieldName: string, value: string) {
+    setFieldOverridesByItem((current) => {
+      const currentForItem = { ...(current[itemNumber] ?? {}) }
+      if (value.trim()) currentForItem[fieldName] = value
+      else delete currentForItem[fieldName]
+      return { ...current, [itemNumber]: currentForItem }
+    })
+  }
+
   function toggleSheet(itemNumber: string, sheet: string) {
     setSelectedSheetsByItem((current) => {
       const selected = current[itemNumber] ?? []
@@ -168,6 +178,7 @@ function App() {
     const selections: GenerateSelection[] = selectedItems.map((item) => {
       const selectedNames = new Set(selectedSheetsByItem[item.itemNumber] ?? [])
       const outputs = (outputsByItem[item.itemNumber] ?? []).filter((output) => selectedNames.has(output.sheetName))
+      const overrides = fieldOverridesByItem[item.itemNumber] ?? {}
       return {
         itemNumber: item.itemNumber,
         materialFamily: familyByItem[item.itemNumber] ?? item.materialFamily,
@@ -176,6 +187,7 @@ function App() {
           documentType: output.documentType,
           generationMode: output.generationMode!,
           sourceTemplate: output.sourceTemplate,
+          fieldOverrides: Object.keys(overrides).length ? overrides : undefined,
         })),
       }
     })
@@ -203,6 +215,7 @@ function App() {
     setOutputsByItem({})
     setSelectedSheetsByItem({})
     setFamilyByItem({})
+    setFieldOverridesByItem({})
     setResult(null)
   }
 
@@ -257,8 +270,10 @@ function App() {
           outputsByItem={outputsByItem}
           selectedSheetsByItem={selectedSheetsByItem}
           familyByItem={familyByItem}
+          fieldOverridesByItem={fieldOverridesByItem}
           onChangeFamily={changeFamily}
           onChangeTemplate={changeTemplate}
+          onChangeFieldOverride={updateFieldOverride}
           onToggle={toggleSheet}
           onSelectAll={selectAllSheets}
           onBack={() => setPage('work-items')}

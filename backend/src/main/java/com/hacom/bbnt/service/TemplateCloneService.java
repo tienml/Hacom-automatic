@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,7 +65,8 @@ public class TemplateCloneService {
             WorkItemDto templateItem,
             ProjectSummary project,
             MaterialFamily family,
-            DocumentType documentType
+            DocumentType documentType,
+            Map<String, String> fieldOverrides
     ) {
         int templateIndex = workbook.getSheetIndex(templateSheetName);
         if (templateIndex < 0) {
@@ -87,7 +89,7 @@ public class TemplateCloneService {
         restorePrintSettings(workbook, template, clone, cloneIndex, printArea, repeatingRows, repeatingColumns);
 
         sanitizeTemplateData(clone, profile, decisions, templateItem);
-        Set<String> certainCells = applyFieldDecisions(clone, decisions);
+        Set<String> certainCells = applyFieldDecisions(clone, decisions, fieldOverrides);
         int cloneDrawingCount = drawingCount(clone);
         boolean cloneHasPrintArea = workbook.getPrintArea(cloneIndex) != null
                 && !workbook.getPrintArea(cloneIndex).isBlank();
@@ -187,12 +189,35 @@ public class TemplateCloneService {
         }
     }
 
-    private Set<String> applyFieldDecisions(Sheet sheet, List<FieldDecisionDto> decisions) {
+    /**
+     * Áp field decisions vào sheet vừa clone.
+     * Với các trường CERTAIN: luôn điền giá trị suy ra từ DM/project.
+     * Với các trường UNCERTAIN/UNKNOWN (mặc định phải để trống): nếu người dùng đã tự nhập
+     * giá trị ở bước "Chi tiết trường dữ liệu" (fieldOverrides, khoá theo fieldName) thì điền
+     * giá trị đó thay vì xóa trắng; nếu không có override thì vẫn xóa trắng như cũ.
+     * targetRanges (vùng dòng mẫu phụ) không nhận override tự do vì đây là cấu trúc nhiều ô,
+     * không phải 1 ô đơn — luôn được làm sạch để giữ đúng bố cục template.
+     */
+    private Set<String> applyFieldDecisions(
+            Sheet sheet,
+            List<FieldDecisionDto> decisions,
+            Map<String, String> fieldOverrides
+    ) {
+        Map<String, String> overrides = fieldOverrides == null ? Map.of() : fieldOverrides;
         Set<String> certain = new LinkedHashSet<>();
         for (FieldDecisionDto decision : decisions) {
-            if (decision.action() == FieldAction.CLEAR
+            boolean needsClearOrOverride = decision.action() == FieldAction.CLEAR
                     || decision.certainty() == DataCertainty.UNCERTAIN
-                    || decision.certainty() == DataCertainty.UNKNOWN) {
+                    || decision.certainty() == DataCertainty.UNKNOWN;
+            if (!needsClearOrOverride) continue;
+            String override = overrides.get(decision.fieldName());
+            if (override != null && !override.isBlank()) {
+                for (String address : decision.targetCells()) {
+                    setCellValue(sheet, address, override.trim());
+                    certain.add(address);
+                }
+                decision.targetRanges().forEach(range -> clearRange(sheet, range));
+            } else {
                 decision.targetCells().forEach(address -> clearCell(sheet, address));
                 decision.targetRanges().forEach(range -> clearRange(sheet, range));
             }

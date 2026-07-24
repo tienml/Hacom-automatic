@@ -14,7 +14,8 @@ function renderPage(overrides: Record<string, unknown> = {}) {
   ]
   const props = {
     items: [item], outputsByItem: { '150': outputs }, selectedSheetsByItem: { '150': outputs.map((value) => value.sheetName) }, familyByItem: { '150': 'VUA' as const },
-    onChangeFamily: vi.fn(), onChangeTemplate: vi.fn(), onToggle: vi.fn(), onSelectAll: vi.fn(), onBack: vi.fn(), onGenerate: vi.fn(), status, busy: false,
+    fieldOverridesByItem: {} as Record<string, Record<string, string>>,
+    onChangeFamily: vi.fn(), onChangeTemplate: vi.fn(), onChangeFieldOverride: vi.fn(), onToggle: vi.fn(), onSelectAll: vi.fn(), onBack: vi.fn(), onGenerate: vi.fn(), status, busy: false,
     ...overrides,
   }
   return { ...render(<TemplatesPage {...props} />), props, item, outputs }
@@ -34,8 +35,15 @@ describe('TemplatesPage output-level selection', () => {
     expect(screen.queryByText('DM.columnD')).not.toBeInTheDocument()
     // 'specimenSize' decision is UNCERTAIN -> must be shown for the user to review/fill.
     expect(screen.getAllByText('Kích thước mẫu').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Để trống').length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/trường đã tự động điền chắc chắn/).length).toBeGreaterThan(0)
+    expect(screen.getAllByPlaceholderText('Để trống').length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/trường tự động điền chắc chắn/).length).toBeGreaterThan(0)
+  })
+  it('lets the user type a value for an uncertain field and reports it via onChangeFieldOverride', async () => {
+    const user = userEvent.setup()
+    const { props } = renderPage()
+    const inputs = screen.getAllByPlaceholderText('Để trống')
+    await user.type(inputs[0], 'B')
+    expect(props.onChangeFieldOverride).toHaveBeenCalled()
   })
   it('shows only the resolved template family (e.g. LMV), not raw instance names like "1.LMV (111)"', () => {
     renderPage()
@@ -84,6 +92,22 @@ describe('TemplatesPage output-level selection', () => {
     renderPage({ items: [partial], familyByItem: { '151': 'VUA' }, outputsByItem: { '151': [] }, selectedSheetsByItem: { '151': [] } })
     expect(screen.getByLabelText('Loại mẫu khóa DM 151')).toHaveTextContent('Vữa')
     expect(screen.queryByLabelText('Loại mẫu DM 151')).not.toBeInTheDocument()
+  })
+
+  it('allows generating a brand-new MAIN sheet (no existing sheet at all) without forcing a material family, and shows no LMV/LMBT selector on it', () => {
+    const noSheetItem = workItem({
+      materialFamily: 'UNKNOWN', sheetStatus: 'NO_SHEETS', requiresTemplateSelection: true,
+      hasMainSheet: false, hasLmSheet: false, hasGmSheet: false, existingSheetNames: [], hasOutputSheets: false,
+    })
+    const generatedMain = output({
+      sheetName: '150', displayName: 'Biểu mẫu chính — sẽ tạo từ 141', type: 'MAIN', documentType: 'MAIN',
+      generated: true, available: true, sourceTemplate: '141', availableSourceTemplates: ['141', '159'],
+      generationMode: 'CLONE_TEMPLATE', availability: 'GENERATABLE', materialFamily: 'UNKNOWN', fieldDecisions: [],
+    })
+    renderPage({ items: [noSheetItem], outputsByItem: { '150': [generatedMain] }, selectedSheetsByItem: { '150': ['150'] }, familyByItem: { '150': 'UNKNOWN' } })
+    expect(screen.getByText(/sẽ tạo từ 141/)).toBeInTheDocument()
+    expect(screen.queryByLabelText('Biểu mẫu phụ MAIN DM 150')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Tạo file xem trước/ })).toBeEnabled()
   })
 
 })

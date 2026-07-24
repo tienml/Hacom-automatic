@@ -126,6 +126,7 @@ export type GenerateOutputSelection = {
   documentType: DocumentType
   generationMode: GenerationMode
   sourceTemplate?: string | null
+  fieldOverrides?: Record<string, string>
 }
 
 export type GenerateSelection = {

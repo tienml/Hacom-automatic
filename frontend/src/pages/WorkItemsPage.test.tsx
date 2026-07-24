@@ -16,13 +16,28 @@ describe('WorkItemsPage per-document status', () => {
     expect(onToggle).toHaveBeenCalledWith(item)
   })
 
-  it('filters by missing LM status', async () => {
+  it('filters by missing LM status instantly (no Apply button needed)', async () => {
     const user = userEvent.setup()
     const missingLm = workItem({ itemNumber: '151', sheetStatus: 'MISSING_LM', hasLmSheet: false, hasGmSheet: true })
     render(<WorkItemsPage analysis={analysis([workItem(), missingLm])} selectedItems={[]} onToggle={vi.fn()} onContinue={vi.fn()} busy={false} />)
     await user.selectOptions(screen.getByLabelText('Trạng thái sheet'), 'MISSING_LM')
-    await user.click(screen.getByRole('button', { name: /Áp dụng/ }))
     expect(screen.getByText('DM 151')).toBeInTheDocument()
     expect(screen.queryByText('DM 150')).not.toBeInTheDocument()
+  })
+
+  it('cascades tầng/khu vực options and rows when a hạng mục lớn is chosen', async () => {
+    const user = userEvent.setup()
+    const wallItem = workItem({ itemNumber: '150', position: 'Tầng 2', majorCategory: 'HẠNG MỤC XÂY TƯỜNG' })
+    const plasterItem = workItem({ itemNumber: '160', position: 'Nhà rác', majorCategory: 'HẠNG MỤC TRÁT TƯỜNG' })
+    render(<WorkItemsPage analysis={analysis([wallItem, plasterItem])} selectedItems={[]} onToggle={vi.fn()} onContinue={vi.fn()} busy={false} />)
+    expect(screen.getByText('DM 150')).toBeInTheDocument()
+    expect(screen.getByText('DM 160')).toBeInTheDocument()
+    await user.selectOptions(screen.getByLabelText('Hạng mục lớn'), 'HẠNG MỤC TRÁT TƯỜNG')
+    expect(screen.queryByText('DM 150')).not.toBeInTheDocument()
+    expect(screen.getByText('DM 160')).toBeInTheDocument()
+    const positionSelect = screen.getByLabelText('Tầng / khu vực') as HTMLSelectElement
+    const positionOptions = Array.from(positionSelect.options).map((option) => option.textContent)
+    expect(positionOptions).toContain('Nhà rác')
+    expect(positionOptions).not.toContain('Tầng 2')
   })
 })

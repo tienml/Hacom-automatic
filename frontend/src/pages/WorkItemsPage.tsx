@@ -1,7 +1,7 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useMemo, useState } from 'react'
 import type { AnalyzeResponse, MaterialFamily, WorkItem, WorkItemSheetStatus } from '../types'
 import {
-  CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon, FileIcon, FilterIcon,
+  CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon, FileIcon,
   InfoIcon, ListIcon, SearchIcon, TemplateIcon, XIcon,
 } from '../icons'
 import { textOrDash } from '../utils'
@@ -22,19 +22,9 @@ export function WorkItemsPage({ analysis, selectedItems, onToggle, onContinue, b
   onContinue: () => void
   busy: boolean
 }) {
-  const [draftFilters, setDraftFilters] = useState<Filters>(DEFAULT_FILTERS)
-  const [appliedFilters, setAppliedFilters] = useState<Filters>(DEFAULT_FILTERS)
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
-
-  const positions = useMemo(() => {
-    const values = new Map<string, string>()
-    analysis.workItems.forEach((item) => {
-      const display = compactText(item.position)
-      if (display && !values.has(normalizeText(display))) values.set(normalizeText(display), display)
-    })
-    return Array.from(values.values()).sort((a, b) => a.localeCompare(b, 'vi'))
-  }, [analysis.workItems])
 
   const majorCategories = useMemo(() => {
     const values = new Map<string, string>()
@@ -45,33 +35,53 @@ export function WorkItemsPage({ analysis, selectedItems, onToggle, onContinue, b
     return Array.from(values.values()).sort((a, b) => a.localeCompare(b, 'vi'))
   }, [analysis.workItems])
 
+  // Danh sách tầng/khu vực chỉ lấy từ các DM thuộc hạng mục lớn đang chọn (nếu có),
+  // để khi chọn "Hạng mục trát tường" thì dropdown tầng/khu vực chỉ còn các tầng của hạng mục đó.
+  const positions = useMemo(() => {
+    const selectedMajorCategory = normalizeText(filters.majorCategory)
+    const values = new Map<string, string>()
+    analysis.workItems.forEach((item) => {
+      if (filters.majorCategory !== 'all' && normalizeText(item.majorCategory ?? '') !== selectedMajorCategory) return
+      const display = compactText(item.position)
+      if (display && !values.has(normalizeText(display))) values.set(normalizeText(display), display)
+    })
+    return Array.from(values.values()).sort((a, b) => a.localeCompare(b, 'vi'))
+  }, [analysis.workItems, filters.majorCategory])
+
   const filtered = useMemo(() => {
-    const needle = normalizeText(appliedFilters.query)
-    const selectedPosition = normalizeText(appliedFilters.position)
-    const selectedMajorCategory = normalizeText(appliedFilters.majorCategory)
+    const needle = normalizeText(filters.query)
+    const selectedPosition = normalizeText(filters.position)
+    const selectedMajorCategory = normalizeText(filters.majorCategory)
     return analysis.workItems.filter((item) => {
       const searchable = normalizeText([item.itemNumber, item.localOrder, item.content, item.position,
         item.recordNumber, item.inspectionTime, item.sampleDate].join(' '))
       const hasSample = Boolean(compactText(item.sampleDate ?? ''))
       return (!needle || searchable.includes(needle))
-        && (appliedFilters.majorCategory === 'all' || normalizeText(item.majorCategory ?? '') === selectedMajorCategory)
-        && (appliedFilters.position === 'all' || normalizeText(item.position) === selectedPosition)
-        && (appliedFilters.sample === 'all' || (appliedFilters.sample === 'with' ? hasSample : !hasSample))
-        && (appliedFilters.status === 'all' || item.sheetStatus === appliedFilters.status)
-        && (appliedFilters.family === 'all' || item.materialFamily === appliedFilters.family)
+        && (filters.majorCategory === 'all' || normalizeText(item.majorCategory ?? '') === selectedMajorCategory)
+        && (filters.position === 'all' || normalizeText(item.position) === selectedPosition)
+        && (filters.sample === 'all' || (filters.sample === 'with' ? hasSample : !hasSample))
+        && (filters.status === 'all' || item.sheetStatus === filters.status)
+        && (filters.family === 'all' || item.materialFamily === filters.family)
     })
-  }, [analysis.workItems, appliedFilters])
+  }, [analysis.workItems, filters])
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize))
   const safePage = Math.min(page, pageCount)
   const visibleItems = filtered.slice((safePage - 1) * pageSize, safePage * pageSize)
   const selectedNumbers = new Set(selectedItems.map((item) => item.itemNumber))
-  const activeFilterCount = countActiveFilters(appliedFilters)
+  const activeFilterCount = countActiveFilters(filters)
   const paginationItems = paginationRange(safePage, pageCount)
 
-  function updateDraft<K extends keyof Filters>(key: K, value: Filters[K]) { setDraftFilters((current) => ({ ...current, [key]: value })) }
-  function applyFilters(event?: FormEvent) { event?.preventDefault(); setAppliedFilters({ ...draftFilters, query: draftFilters.query.trim() }); setPage(1) }
-  function clearFilters() { setDraftFilters(DEFAULT_FILTERS); setAppliedFilters(DEFAULT_FILTERS); setPage(1) }
+  function updateFilter<K extends keyof Filters>(key: K, value: Filters[K]) {
+    setFilters((current) => {
+      const next = { ...current, [key]: value }
+      // Đổi hạng mục lớn thì reset lựa chọn tầng/khu vực vì danh sách tầng/khu vực đã đổi theo.
+      if (key === 'majorCategory') next.position = 'all'
+      return next
+    })
+    setPage(1)
+  }
+  function clearFilters() { setFilters(DEFAULT_FILTERS); setPage(1) }
 
   return (
     <div className="page-stack work-items-page">
@@ -89,17 +99,16 @@ export function WorkItemsPage({ analysis, selectedItems, onToggle, onContinue, b
 
       {analysis.analysisWarnings.length > 0 && <section className="inline-warning analysis-warning-list"><InfoIcon size={18} /><div><strong>Cảnh báo phân tích workbook</strong>{analysis.analysisWarnings.map((warning) => <p key={warning}>{warning}</p>)}</div></section>}
 
-      <form className="surface filters-surface safe-template-filters" onSubmit={applyFilters}>
-        <label className="search-field"><SearchIcon size={20} /><input value={draftFilters.query} onChange={(event) => updateDraft('query', event.target.value)} placeholder="Tìm số DM, nội dung, vị trí hoặc số biên bản..." /></label>
-        <FilterSelect label="Hạng mục lớn" value={draftFilters.majorCategory} onChange={(value) => updateDraft('majorCategory', value)}><option value="all">Tất cả hạng mục lớn</option>{majorCategories.map((value) => <option key={value} value={value}>{value}</option>)}</FilterSelect>
-        <FilterSelect label="Tầng / khu vực" value={draftFilters.position} onChange={(value) => updateDraft('position', value)}><option value="all">Tất cả tầng / khu vực</option>{positions.map((value) => <option key={value} value={value}>{value}</option>)}</FilterSelect>
-        <FilterSelect label="Trạng thái sheet" value={draftFilters.status} onChange={(value) => updateDraft('status', value as StatusFilter)}>
+      <form className="surface filters-surface safe-template-filters" onSubmit={(event) => event.preventDefault()}>
+        <label className="search-field"><SearchIcon size={20} /><input value={filters.query} onChange={(event) => updateFilter('query', event.target.value)} placeholder="Tìm số DM, nội dung, vị trí hoặc số biên bản..." /></label>
+        <FilterSelect label="Hạng mục lớn" value={filters.majorCategory} onChange={(value) => updateFilter('majorCategory', value)}><option value="all">Tất cả hạng mục lớn</option>{majorCategories.map((value) => <option key={value} value={value}>{value}</option>)}</FilterSelect>
+        <FilterSelect label="Tầng / khu vực" value={filters.position} onChange={(value) => updateFilter('position', value)}><option value="all">Tất cả tầng / khu vực</option>{positions.map((value) => <option key={value} value={value}>{value}</option>)}</FilterSelect>
+        <FilterSelect label="Trạng thái sheet" value={filters.status} onChange={(value) => updateFilter('status', value as StatusFilter)}>
           <option value="all">Tất cả</option><option value="NO_SHEETS">Không có sheet</option><option value="MAIN_ONLY">Chỉ có sheet chính</option><option value="MISSING_LM">Thiếu LM</option><option value="MISSING_GM">Thiếu GM</option><option value="MISSING_LM_GM">Thiếu LM/GM</option><option value="COMPLETE_SAMPLE_PAIR">Đã có đủ LM/GM</option><option value="UNKNOWN_MATERIAL">Chưa xác định vật liệu</option>
         </FilterSelect>
-        <FilterSelect label="Vật liệu" value={draftFilters.family} onChange={(value) => updateDraft('family', value as FamilyFilter)}><option value="all">Tất cả</option><option value="VUA">Vữa</option><option value="BETONG">Bê tông</option><option value="UNKNOWN">Chưa xác định</option></FilterSelect>
-        <FilterSelect label="Lấy mẫu" value={draftFilters.sample} onChange={(value) => updateDraft('sample', value as SampleFilter)}><option value="all">Tất cả</option><option value="with">Có ngày</option><option value="without">Chưa có ngày</option></FilterSelect>
-        <button className="secondary-button filter-apply-button" type="submit"><FilterIcon size={18} /> Áp dụng{activeFilterCount ? ` (${activeFilterCount})` : ''}</button>
-        <button className="filter-clear-button" type="button" onClick={clearFilters}><XIcon size={17} /> Xóa lọc</button>
+        <FilterSelect label="Vật liệu" value={filters.family} onChange={(value) => updateFilter('family', value as FamilyFilter)}><option value="all">Tất cả</option><option value="VUA">Vữa</option><option value="BETONG">Bê tông</option><option value="UNKNOWN">Chưa xác định</option></FilterSelect>
+        <FilterSelect label="Lấy mẫu" value={filters.sample} onChange={(value) => updateFilter('sample', value as SampleFilter)}><option value="all">Tất cả</option><option value="with">Có ngày</option><option value="without">Chưa có ngày</option></FilterSelect>
+        <button className="filter-clear-button" type="button" onClick={clearFilters}><XIcon size={17} /> Xóa lọc{activeFilterCount ? ` (${activeFilterCount})` : ''}</button>
       </form>
 
       <section className="surface table-surface">

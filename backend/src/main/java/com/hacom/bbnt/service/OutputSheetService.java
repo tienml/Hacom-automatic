@@ -54,10 +54,31 @@ public class OutputSheetService {
         List<OutputSheetDto> outputs = new ArrayList<>();
         if (item.mainPlan() != null && item.mainPlan().availability() == OutputAvailability.EXISTING) {
             outputs.add(existingOutput(item.mainPlan(), itemNumber, item.materialFamily()));
+        } else if (item.mainPlan() != null && item.mainPlan().availability() == OutputAvailability.GENERATABLE) {
+            outputs.add(mainOutput(item.mainPlan(), itemNumber));
         }
         outputs.add(sampleOutput(job, item, DocumentType.LM, family, requestedLmTemplate));
         outputs.add(sampleOutput(job, item, DocumentType.GM, family, requestedGmTemplate));
         return outputs.stream().filter(java.util.Objects::nonNull).toList();
+    }
+
+    private OutputSheetDto mainOutput(DocumentPlanDto plan, String itemNumber) {
+        return new OutputSheetDto(
+                plan.plannedSheetName(),
+                "Biểu mẫu chính — sẽ tạo từ " + plan.sourceTemplate(),
+                DocumentType.MAIN.name(),
+                DocumentType.MAIN,
+                "Tạo mới từ layout " + plan.sourceTemplate() + "; chỉ điền dữ liệu CERTAIN — hồ sơ chính cho DM " + itemNumber,
+                true,
+                true,
+                plan.sourceTemplate(),
+                plan.availableSourceTemplates(),
+                GenerationMode.CLONE_TEMPLATE,
+                OutputAvailability.GENERATABLE,
+                MaterialFamily.UNKNOWN,
+                plan.fieldDecisions(),
+                plan.warnings()
+        );
     }
 
     public List<OutputSheetDto> outputs(String jobId, String rawItemNumber, MaterialFamily requestedFamily) {

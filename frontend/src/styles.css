@@ -603,14 +603,6 @@ button:disabled { cursor: not-allowed; opacity: .48; }
 .template-block-toolbar small { color: #7c8797; font-size: 9px; }
 .compact-template-list .template-card { min-height: 82px; }
 .template-source { display: block; margin-top: 4px; color: #9b6410; font-size: 8px; font-weight: 700; }
-.field-decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
-.decision-panel { min-height: 100px; padding: 12px; border: 1px solid; border-radius: 9px; }
-.decision-panel.certain { border-color: #bfe5cf; background: #f4fcf7; }
-.decision-panel.blank { border-color: #f0d9a3; background: #fffaf0; }
-.decision-panel > strong { display: block; margin-bottom: 9px; font-size: 10px; }
-.decision-panel > div { display: flex; flex-wrap: wrap; gap: 5px; }
-.decision-panel span { padding: 4px 6px; border-radius: 5px; background: rgba(255,255,255,.8); font-size: 8px; }
-.decision-panel small { color: #7b8491; }
 .item-warning-list { margin-top: 12px; padding: 9px 11px; border-radius: 8px; background: #fff8e9; }
 .item-warning-list p { display: flex; align-items: flex-start; gap: 6px; margin: 4px 0; color: #886016; font-size: 9px; line-height: 1.4; }
 .sticky-selection-column { position: sticky; top: 88px; }
@@ -637,18 +629,18 @@ button:disabled { cursor: not-allowed; opacity: .48; }
 .source-template-select { display: grid; grid-template-columns: minmax(130px, .45fr) minmax(220px, 1fr); gap: 12px; align-items: center; padding: 10px 16px 14px 58px; border-top: 1px dashed #e2e5e9; background: #fafbfc; }
 .source-template-select span { font-size: 12px; font-weight: 700; color: #596574; }
 .source-template-select select { min-width: 0; padding: 8px 10px; border: 1px solid #cfd5dc; border-radius: 8px; background: #fff; }
-.field-decision-table-wrap { margin-top: 18px; }
-.field-decision-table-wrap h3 { margin: 0 0 10px; font-size: 15px; }
-.decision-autofill-note { display: flex; align-items: center; gap: 7px; margin: 0 0 10px; padding: 9px 12px; border-radius: 8px; color: #14844a; background: var(--success-soft); font-size: 11px; font-weight: 600; }
-.decision-autofill-note.all-certain { margin-top: 0; }
-.field-decision-table td { vertical-align: top; }
-.field-decision-table td strong { display: block; }
-.decision-reason { display: block; margin-top: 3px; max-width: 360px; color: #6b7480; font-weight: 400; }
-.document-type-pill, .decision-action { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; white-space: nowrap; }
-.document-type-pill { background: #eef3f8; color: #304255; }
-.action-populate { background: #e6f7ed; color: #11753a; }
-.action-clear { background: #fff1eb; color: #aa431f; }
-.action-keep_template_structure { background: #eef3f8; color: #4b5968; }
+.field-decision-compact { margin-top: 18px; }
+.field-decision-compact-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.field-decision-compact-head h3 { margin: 0; font-size: 14px; }
+.decision-autofill-note { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; color: #14844a; background: var(--success-soft); font-size: 10px; font-weight: 700; white-space: nowrap; }
+.decision-autofill-note.all-certain { border-radius: 8px; white-space: normal; }
+.field-decision-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 12px; }
+.field-decision-input-row { display: grid; gap: 4px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fbfbfa; }
+.field-decision-input-row .field-decision-input-label { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; font-size: 11px; font-weight: 700; color: #3d4858; }
+.field-decision-input-row .field-decision-input-label small { color: #9aa3ae; font-size: 9px; font-weight: 700; white-space: nowrap; }
+.field-decision-input-row input { height: 32px; border: 1px solid var(--line-strong); border-radius: 6px; padding: 0 9px; font-size: 11px; color: #3d4858; background: #fff; outline: 0; }
+.field-decision-input-row input:focus { border-color: #f09aaa; box-shadow: 0 0 0 3px rgba(239, 18, 57, .08); }
+.field-decision-input-row input::placeholder { color: #b6bdc6; }
 .template-badge.missing { background: #ffe9e5; color: #9e2d22; }
 .analysis-warning-list { align-items: flex-start; }
 .analysis-warning-list p { margin: 4px 0 0; }

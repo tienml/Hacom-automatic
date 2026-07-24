@@ -62,7 +62,19 @@ public class FieldDecisionService {
         addPopulate(decisions, "sequenceNumber", "templateStructure", "1", profile.targets("sequenceNumber"), type,
                 "Giữ một dòng dữ liệu đầu tiên trong bảng mẫu.");
 
-        if (type == DocumentType.LM) {
+        if (type == DocumentType.MAIN) {
+            addPopulate(decisions, "workContent", "DM.columnC", item.content(), profile.targets("workContent"), type,
+                    "Đối tượng nghiệm thu lấy nguyên văn nội dung công việc từ DM, không thêm tiền tố Lấy mẫu/Mẫu.");
+            addPopulateOrClear(decisions, "acceptanceDateTime", "DM.columnE", item.inspectionTime(),
+                    profile.targets("acceptanceDateTime"), type,
+                    "Ngày giờ nghiệm thu lấy trực tiếp từ DM; nếu DM trống thì để trống thực sự.");
+            addPopulateOrClear(decisions, "acceptanceNumber", "DM.columnF", item.recordNumber(),
+                    profile.targets("acceptanceNumber"), type,
+                    "Số biên bản nghiệm thu (NTCV) lấy trực tiếp từ DM.");
+            addPopulateOrClear(decisions, "requestNumber", "acceptanceNumber.segmentConversion",
+                    documentNumberService.convert(item.recordNumber(), "YCNT"), profile.targets("requestNumber"), type,
+                    "Số phiếu yêu cầu nghiệm thu (YCNT) suy ra bằng cách thay segment loại hồ sơ từ số biên bản.");
+        } else if (type == DocumentType.LM) {
             addPopulateOrClear(decisions, "sampleDate", "DM.columnG", item.sampleDate(), profile.targets("sampleDate"), type,
                     "Chỉ điền khi DM có ngày lấy mẫu hợp lệ.");
             addPopulateOrClear(decisions, "lmNumber", "acceptanceNumber.segmentConversion",
@@ -96,21 +108,23 @@ public class FieldDecisionService {
         addProjectDecision(decisions, "contractor", project == null ? null : project.contractor(),
                 "PROJECT_LEVEL_DATA.contractor", profile.targets("contractor"), type);
 
-        for (String field : UNCERTAIN_FIELDS) {
-            List<String> targetRanges = field.equals("additionalSampleRows")
-                    ? profile.uncertainRanges()
-                    : List.of();
-            decisions.add(new FieldDecisionDto(
-                    field,
-                    "template/unknown",
-                    null,
-                    DataCertainty.UNCERTAIN,
-                    FieldAction.CLEAR,
-                    profile.targets(field),
-                    targetRanges,
-                    type,
-                    "Không có nguồn CERTAIN trong DM hoặc cấu hình dự án; phải xóa khỏi bản clone."
-            ));
+        if (type != DocumentType.MAIN) {
+            for (String field : UNCERTAIN_FIELDS) {
+                List<String> targetRanges = field.equals("additionalSampleRows")
+                        ? profile.uncertainRanges()
+                        : List.of();
+                decisions.add(new FieldDecisionDto(
+                        field,
+                        "template/unknown",
+                        null,
+                        DataCertainty.UNCERTAIN,
+                        FieldAction.CLEAR,
+                        profile.targets(field),
+                        targetRanges,
+                        type,
+                        "Không có nguồn CERTAIN trong DM hoặc cấu hình dự án; phải xóa khỏi bản clone."
+                ));
+            }
         }
         return List.copyOf(decisions);
     }

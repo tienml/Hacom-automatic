@@ -5,20 +5,22 @@ import {
 } from '../icons'
 import { textOrDash } from '../utils'
 import {
-  actionLabel, countSelectedSheets, familyLabel, fieldLabel,
+  countSelectedSheets, familyLabel, fieldLabel,
   hasIncompleteSelection, requiresManualFamily, sheetStatusLabel,
 } from '../uiRules'
 
 export function TemplatesPage({
-  items, outputsByItem, selectedSheetsByItem, familyByItem, onChangeFamily, onChangeTemplate,
-  onToggle, onSelectAll, onBack, onGenerate, status, busy,
+  items, outputsByItem, selectedSheetsByItem, familyByItem, fieldOverridesByItem, onChangeFamily, onChangeTemplate,
+  onChangeFieldOverride, onToggle, onSelectAll, onBack, onGenerate, status, busy,
 }: {
   items: WorkItem[]
   outputsByItem: Record<string, OutputSheet[]>
   selectedSheetsByItem: Record<string, string[]>
   familyByItem: Record<string, MaterialFamily>
+  fieldOverridesByItem: Record<string, Record<string, string>>
   onChangeFamily: (itemNumber: string, family: MaterialFamily) => void
   onChangeTemplate: (itemNumber: string, documentType: 'LM' | 'GM', sourceTemplate: string) => void
+  onChangeFieldOverride: (itemNumber: string, fieldName: string, value: string) => void
   onToggle: (itemNumber: string, sheet: string) => void
   onSelectAll: (itemNumber: string) => void
   onBack: () => void
@@ -32,7 +34,7 @@ export function TemplatesPage({
     const selectedFamily = familyByItem[item.itemNumber] ?? item.materialFamily
     const selected = new Set(selectedSheetsByItem[item.itemNumber] ?? [])
     return selectedFamily === 'UNKNOWN'
-      && (outputsByItem[item.itemNumber] ?? []).some((output) => selected.has(output.sheetName) && output.generated)
+      && (outputsByItem[item.itemNumber] ?? []).some((output) => selected.has(output.sheetName) && output.generated && output.documentType !== 'MAIN')
   })
   const fatalMissingTemplate = items.some((item) => {
     const selected = new Set(selectedSheetsByItem[item.itemNumber] ?? [])
@@ -95,15 +97,21 @@ export function TemplatesPage({
                           <span className="template-main"><strong>{output.displayName}</strong><small>{output.description}</small><span className="template-code"><FileIcon size={13} /> Sheet: {output.sheetName}</span>{output.sourceTemplate && <span className="template-source">Nguồn layout: {output.sourceTemplate}</span>}</span>
                           <span className={`template-badge ${output.generated ? 'recommended' : output.available ? 'required' : 'missing'}`}>{output.generated ? 'Tạo mới an toàn' : output.available ? 'Có sẵn' : 'Thiếu template'}</span>
                         </button>
-                        {output.generated && (
+                        {output.generated && output.documentType !== 'MAIN' && (
                           <label className="source-template-select"><span>Biểu mẫu phụ</span><select aria-label={`Biểu mẫu phụ ${output.documentType} DM ${item.itemNumber}`} value={checked ? familyCodeOf(output.sourceTemplate) : NO_AUX_FORM} onChange={(event) => {
                             const nextCode = event.target.value
+                            if (nextCode === SWITCH_TO_VUA || nextCode === SWITCH_TO_BETONG) {
+                              onChangeFamily(item.itemNumber, nextCode === SWITCH_TO_VUA ? 'VUA' : 'BETONG')
+                              return
+                            }
                             if (nextCode === NO_AUX_FORM) { if (checked) onToggle(item.itemNumber, output.sheetName); return }
                             if (!checked) onToggle(item.itemNumber, output.sheetName)
                             const nextTemplate = pickTemplateForCode(output.availableSourceTemplates, nextCode, output.sourceTemplate)
                             if (nextTemplate && nextTemplate !== output.sourceTemplate) onChangeTemplate(item.itemNumber, output.documentType as 'LM' | 'GM', nextTemplate)
                           }} disabled={busy}>
                             {templateCodeOptions(output.availableSourceTemplates).map((code) => <option key={code} value={code}>{code}</option>)}
+                            {!familyLocked && family === 'BETONG' && <option value={SWITCH_TO_VUA}>→ Đổi sang Vữa (LMV/GMV)</option>}
+                            {!familyLocked && family === 'VUA' && <option value={SWITCH_TO_BETONG}>→ Đổi sang Bê tông (LMBT/GMBT)</option>}
                             <option value={NO_AUX_FORM}>Không sinh biểu mẫu phụ</option>
                           </select></label>
                         )}
@@ -113,7 +121,7 @@ export function TemplatesPage({
                   {outputs.length === 0 && <div className="inline-warning"><InfoIcon size={17} /> Chưa có output LM/GM phù hợp. MAIN vẫn có thể xuất nếu workbook đã có; nếu không, hãy chọn loại vật liệu hoặc kiểm tra template registry.</div>}
                 </div>
 
-                {decisions.length > 0 && <DecisionTable decisions={decisions} />}
+                {decisions.length > 0 && <DecisionTable decisions={decisions} itemNumber={item.itemNumber} overrides={fieldOverridesByItem[item.itemNumber] ?? {}} onChangeFieldOverride={onChangeFieldOverride} busy={busy} />}
                 {warnings.length > 0 && <div className="item-warning-list">{warnings.map((warning) => <p key={warning}><InfoIcon size={14} /> {warning}</p>)}</div>}
               </section>
             )
@@ -146,24 +154,65 @@ export function TemplatesPage({
   )
 }
 
-function DecisionTable({ decisions }: { decisions: FieldDecision[] }) {
-  const allRows = uniqueDecisions(decisions)
-  const autoFilledCount = allRows.filter((decision) => decision.certainty === 'CERTAIN').length
-  const rows = allRows.filter((decision) => decision.certainty !== 'CERTAIN')
-  return <div className="field-decision-table-wrap">
-    <h3>Chi tiết trường dữ liệu</h3>
-    {autoFilledCount > 0 && <p className="decision-autofill-note"><CheckIcon size={13} /> {autoFilledCount} trường đã tự động điền chắc chắn (không cần xem lại).</p>}
-    {rows.length > 0 ? (
-      <div className="data-table-wrap"><table className="data-table field-decision-table"><thead><tr><th>Biểu mẫu</th><th>Trường</th><th>Nguồn</th><th>Giá trị dự kiến</th><th>Hành động</th></tr></thead><tbody>{rows.map((decision) => <tr key={`${decision.documentType}-${decision.fieldName}-${decision.action}`}><td><span className="document-type-pill">{documentTypeLabel(decision.documentType)}</span></td><td><strong>{fieldLabel(decision.fieldName)}</strong><small className="decision-reason">{decision.reason}</small></td><td>{textOrDash(decision.source)}</td><td>{decision.value ? decision.value : '—'}</td><td><span className={`decision-action action-${decision.action.toLowerCase()}`}>{actionLabel(decision.action)}</span></td></tr>)}</tbody></table></div>
+function DecisionTable({ decisions, itemNumber, overrides, onChangeFieldOverride, busy }: {
+  decisions: FieldDecision[]
+  itemNumber: string
+  overrides: Record<string, string>
+  onChangeFieldOverride: (itemNumber: string, fieldName: string, value: string) => void
+  busy: boolean
+}) {
+  const autoFilledCount = countCertainFields(decisions)
+  const uncertainFields = groupUncertainFields(decisions)
+  return <div className="field-decision-compact">
+    <div className="field-decision-compact-head">
+      <h3>Chi tiết trường dữ liệu</h3>
+      {autoFilledCount > 0 && <span className="decision-autofill-note"><CheckIcon size={12} /> {autoFilledCount} trường tự động điền chắc chắn</span>}
+    </div>
+    {uncertainFields.length > 0 ? (
+      <div className="field-decision-grid">
+        {uncertainFields.map((field) => (
+          <label className="field-decision-input-row" key={field.fieldName} title={field.reason}>
+            <span className="field-decision-input-label">{fieldLabel(field.fieldName)}<small>{field.documentTypes.join(' · ')}</small></span>
+            <input
+              type="text"
+              placeholder="Để trống"
+              value={overrides[field.fieldName] ?? ''}
+              onChange={(event) => onChangeFieldOverride(itemNumber, field.fieldName, event.target.value)}
+              disabled={busy}
+            />
+          </label>
+        ))}
+      </div>
     ) : <p className="decision-autofill-note all-certain"><CheckIcon size={13} /> Mọi trường đều đã xác định chắc chắn, không cần người dùng điền thêm.</p>}
   </div>
 }
 function documentTypeLabel(type: DocumentType) { return type === 'MAIN' ? 'MAIN' : type === 'LM' ? 'LM' : type === 'GM' ? 'GM' : '—' }
 function unique(values: string[]) { return Array.from(new Set(values.filter(Boolean))) }
-function uniqueDecisions(decisions: FieldDecision[]) { const seen = new Set<string>(); return decisions.filter((decision) => { const key = `${decision.documentType}|${decision.fieldName}|${decision.action}|${decision.value ?? ''}`; if (seen.has(key)) return false; seen.add(key); return true }) }
+/** Đếm số trường (theo fieldName, không lặp giữa LM/GM) đã được điền tự động chắc chắn. */
+function countCertainFields(decisions: FieldDecision[]) {
+  const seen = new Set<string>()
+  decisions.forEach((decision) => { if (decision.certainty === 'CERTAIN') seen.add(decision.fieldName) })
+  return seen.size
+}
+/**
+ * Gom các trường chưa chắc chắn (UNCERTAIN/UNKNOWN) theo fieldName — cùng 1 trường như "grade" có thể
+ * xuất hiện cả ở LM và GM, nhưng người dùng chỉ cần nhập 1 lần, giá trị sẽ được áp cho mọi biểu mẫu liên quan.
+ */
+function groupUncertainFields(decisions: FieldDecision[]): Array<{ fieldName: string; reason: string; documentTypes: string[] }> {
+  const map = new Map<string, { fieldName: string; reason: string; documentTypes: string[] }>()
+  decisions.filter((decision) => decision.certainty !== 'CERTAIN').forEach((decision) => {
+    const docLabel = documentTypeLabel(decision.documentType)
+    const existing = map.get(decision.fieldName)
+    if (existing) { if (!existing.documentTypes.includes(docLabel)) existing.documentTypes.push(docLabel) }
+    else map.set(decision.fieldName, { fieldName: decision.fieldName, reason: decision.reason, documentTypes: [docLabel] })
+  })
+  return Array.from(map.values())
+}
 function Field({ label, value }: { label: string; value: string }) { return <div className="selected-field"><span>{label}</span><strong title={value}>{value}</strong></div> }
 
 const NO_AUX_FORM = '__NONE__'
+const SWITCH_TO_VUA = '__SWITCH_VUA__'
+const SWITCH_TO_BETONG = '__SWITCH_BETONG__'
 /** Trích mã họ biểu mẫu (VD: "1.LMBT (141)" -> "LMBT") để không bắt người dùng chọn từng bản instance cụ thể. */
 function familyCodeOf(templateName: string | null) {
   if (!templateName) return NO_AUX_FORM

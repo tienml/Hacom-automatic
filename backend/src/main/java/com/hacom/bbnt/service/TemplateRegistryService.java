@@ -35,11 +35,17 @@ public class TemplateRegistryService {
     public TemplateRegistry build(Workbook workbook) {
         Map<MaterialFamily, Map<String, PairCandidate>> grouped = new EnumMap<>(MaterialFamily.class);
         Map<String, TemplateProfile> profiles = new LinkedHashMap<>();
+        List<MainCandidate> mainCandidates = new ArrayList<>();
 
         for (int index = 0; index < workbook.getNumberOfSheets(); index++) {
             Sheet sheet = workbook.getSheetAt(index);
             ParsedSheetName parsed = sheetNameParser.parse(sheet.getSheetName()).orElse(null);
-            if (parsed == null || parsed.mainSheet() || parsed.materialFamily() == MaterialFamily.UNKNOWN) continue;
+            if (parsed == null) continue;
+            if (parsed.mainSheet()) {
+                mainCandidates.add(inspectMainSheet(workbook, sheet, index));
+                continue;
+            }
+            if (parsed.materialFamily() == MaterialFamily.UNKNOWN) continue;
 
             PairCandidate candidate = grouped
                     .computeIfAbsent(parsed.materialFamily(), ignored -> new LinkedHashMap<>())
@@ -65,7 +71,34 @@ public class TemplateRegistryService {
             pairs.stream().filter(TemplatePair::usable).max(Comparator.comparingInt(this::score))
                     .ifPresent(pair -> recommended.put(family, withRecommendedReason(pair)));
         }
-        return new TemplateRegistry(candidatesByFamily, recommended, profiles);
+
+        List<String> mainTemplates = mainCandidates.stream()
+                .filter(candidate -> candidate.profileResolvable)
+                .sorted(Comparator.comparingInt((MainCandidate candidate) -> candidate.score).reversed()
+                        .thenComparing(candidate -> candidate.sheetName))
+                .map(candidate -> candidate.sheetName)
+                .toList();
+        return new TemplateRegistry(candidatesByFamily, recommended, profiles, mainTemplates);
+    }
+
+    /** Kiểm tra 1 sheet MAIN có đủ điều kiện làm layout nguồn để clone không (profile đọc được + có in ấn/merge hợp lý). */
+    private MainCandidate inspectMainSheet(Workbook workbook, Sheet sheet, int index) {
+        boolean profileResolvable;
+        try {
+            profileService.resolve(sheet, MaterialFamily.UNKNOWN, DocumentType.MAIN);
+            profileResolvable = true;
+        } catch (ApiException exception) {
+            profileResolvable = false;
+        }
+        String printArea = workbook.getPrintArea(index);
+        int score = (profileResolvable ? 10_000 : 0)
+                + (printArea != null && !printArea.isBlank() ? 1_000 : 0)
+                + sheet.getNumMergedRegions()
+                + drawingCount(sheet) * 100;
+        return new MainCandidate(sheet.getSheetName(), profileResolvable, score);
+    }
+
+    private record MainCandidate(String sheetName, boolean profileResolvable, int score) {
     }
 
     private CandidateSheet inspectSheet(Workbook workbook, Sheet sheet, int index, ParsedSheetName parsed) {

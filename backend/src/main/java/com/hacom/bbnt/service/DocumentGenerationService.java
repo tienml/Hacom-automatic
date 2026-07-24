@@ -14,6 +14,7 @@ import com.hacom.bbnt.model.MaterialFamily;
 import com.hacom.bbnt.model.OutputAvailability;
 import com.hacom.bbnt.model.ParsedSheetName;
 import com.hacom.bbnt.model.TemplatePair;
+import com.hacom.bbnt.model.TemplateProfile;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -179,13 +180,44 @@ public class DocumentGenerationService {
                     throw new ApiException(HttpStatus.BAD_REQUEST,
                             "Generation mode không hợp lệ cho " + output.sheetName() + ".");
                 }
+                if (output.documentType() == DocumentType.MAIN) {
+                    DocumentPlanDto currentMainPlan = item.mainPlan();
+                    if (currentMainPlan != null && currentMainPlan.availability() == OutputAvailability.EXISTING) {
+                        throw new ApiException(HttpStatus.BAD_REQUEST,
+                                "DM " + itemNumber + " đã có sheet MAIN; không được clone bản trùng thay cho EXISTING_SHEET.");
+                    }
+                    ParsedSheetName parsedMain = sheetNameParser.parse(output.sheetName()).orElse(null);
+                    if (parsedMain == null || !parsedMain.mainSheet()
+                            || !parsedMain.itemNumber().equalsIgnoreCase(itemNumber)) {
+                        throw new ApiException(HttpStatus.BAD_REQUEST,
+                                "Tên sheet MAIN dự kiến không hợp lệ cho DM " + itemNumber + ": " + output.sheetName());
+                    }
+                    String mainTemplate = output.sourceTemplate();
+                    if (mainTemplate == null || mainTemplate.isBlank()) {
+                        mainTemplate = job.templateRegistry().bestMainTemplate();
+                    }
+                    TemplateProfile mainProfile = mainTemplate == null ? null : job.templateRegistry().profileFor(mainTemplate);
+                    if (mainTemplate == null || mainProfile == null || mainProfile.documentType() != DocumentType.MAIN) {
+                        throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                                "Không tìm thấy template MAIN hợp lệ để clone cho DM " + itemNumber + ".");
+                    }
+                    String plannedMainName = sheetNameParser.plannedSheetName(DocumentType.MAIN, family, itemNumber);
+                    if (!normalizeSheetName(plannedMainName).equals(normalizeSheetName(output.sheetName()))) {
+                        throw new ApiException(HttpStatus.BAD_REQUEST,
+                                "Tên sheet clone phải đúng plan " + plannedMainName + " cho DM " + itemNumber + ".");
+                    }
+                    outputs.add(ResolvedOutput.clone(new PlannedClone(
+                            plannedMainName, mainTemplate, DocumentType.MAIN, family, output.fieldOverrides()
+                    )));
+                    continue;
+                }
                 if (family == MaterialFamily.UNKNOWN) {
                     throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
                             "DM " + itemNumber + " chưa xác định loại vật liệu. Hãy chọn Vữa hoặc Bê tông.");
                 }
                 if (output.documentType() != DocumentType.LM && output.documentType() != DocumentType.GM) {
                     throw new ApiException(HttpStatus.BAD_REQUEST,
-                            "Chỉ LM/GM mới có thể tạo bằng CLONE_TEMPLATE.");
+                            "Chỉ MAIN/LM/GM mới có thể tạo bằng CLONE_TEMPLATE.");
                 }
                 DocumentPlanDto currentPlan = planFor(item, output.documentType());
                 if (currentPlan != null && currentPlan.availability() == OutputAvailability.EXISTING) {
@@ -214,7 +246,7 @@ public class DocumentGenerationService {
                             "Tên sheet clone phải đúng plan " + plannedName + " cho DM " + itemNumber + ".");
                 }
                 outputs.add(ResolvedOutput.clone(new PlannedClone(
-                        plannedName, template, output.documentType(), family
+                        plannedName, template, output.documentType(), family, output.fieldOverrides()
                 )));
             }
             outputs.sort(Comparator.comparingInt(value -> documentOrder(value.documentType())));
@@ -363,7 +395,8 @@ public class DocumentGenerationService {
                             templateItem,
                             job.project(),
                             clone.family(),
-                            clone.documentType()
+                            clone.documentType(),
+                            clone.fieldOverrides()
                     );
                     selectedNames.add(result.actualSheetName());
                     warnings.addAll(result.warnings());
@@ -659,7 +692,8 @@ public class DocumentGenerationService {
             String plannedSheetName,
             String templateSheet,
             DocumentType documentType,
-            MaterialFamily family
+            MaterialFamily family,
+            Map<String, String> fieldOverrides
     ) {
     }
 

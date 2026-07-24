@@ -9,7 +9,8 @@ import java.util.Map;
 public record TemplateRegistry(
         Map<MaterialFamily, List<TemplatePair>> candidates,
         Map<MaterialFamily, TemplatePair> recommendedPairs,
-        Map<String, TemplateProfile> profilesBySheet
+        Map<String, TemplateProfile> profilesBySheet,
+        List<String> mainTemplates
 ) {
     public TemplateRegistry {
         EnumMap<MaterialFamily, List<TemplatePair>> candidateCopy = new EnumMap<>(MaterialFamily.class);
@@ -28,6 +29,7 @@ public record TemplateRegistry(
             profilesBySheet.forEach((name, profile) -> profilesCopy.put(normalize(name), profile));
         }
         profilesBySheet = Map.copyOf(profilesCopy);
+        mainTemplates = mainTemplates == null ? List.of() : List.copyOf(mainTemplates);
     }
 
     public TemplatePair pairFor(MaterialFamily family) {
@@ -40,6 +42,11 @@ public record TemplateRegistry(
 
     public TemplateProfile profileFor(String sheetName) {
         return profilesBySheet.get(normalize(sheetName));
+    }
+
+    /** Sheet MAIN tốt nhất hiện có để làm layout nguồn khi một DM chưa có sheet chính. */
+    public String bestMainTemplate() {
+        return mainTemplates.isEmpty() ? null : mainTemplates.get(0);
     }
 
     private static String normalize(String value) {

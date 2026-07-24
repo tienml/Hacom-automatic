@@ -22,6 +22,8 @@ export function fieldLabel(field: string) {
     lmNumber: 'Số LM', gmNumber: 'Số GM', lmDescription: 'Mô tả LM',
     gmDescription: 'Mô tả GM', sequenceNumber: 'STT dòng mẫu', projectName: 'Tên dự án',
     packageName: 'Gói thầu', projectLocation: 'Địa điểm dự án', contractor: 'Nhà thầu',
+    workContent: 'Đối tượng nghiệm thu', acceptanceDateTime: 'Ngày giờ nghiệm thu',
+    acceptanceNumber: 'Số biên bản (NTCV)', requestNumber: 'Số phiếu yêu cầu (YCNT)',
     grade: 'Mác vật liệu', strengthClass: 'Cấp độ bền', specimenSize: 'Kích thước mẫu',
     sampleGroupCount: 'Số tổ mẫu', sampleCount: 'Số mẫu', samplesPerGroup: 'Số mẫu mỗi tổ',
     testAge: 'Tuổi mẫu', note: 'Ghi chú', testCriteria: 'Chỉ tiêu thí nghiệm',

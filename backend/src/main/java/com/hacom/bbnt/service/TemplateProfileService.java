@@ -37,9 +37,10 @@ public class TemplateProfileService {
     private static final List<String> CONTRACTOR_CELLS = List.of("A5");
 
     public TemplateProfile resolve(Sheet sheet, MaterialFamily family, DocumentType type) {
+        if (type == DocumentType.MAIN) return resolveMain(sheet);
         if (type != DocumentType.LM && type != DocumentType.GM) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Chỉ có thể tạo profile cho biểu mẫu LM hoặc GM.");
+                    "Chỉ có thể tạo profile cho biểu mẫu MAIN, LM hoặc GM.");
         }
         DataFormatter formatter = new DataFormatter(Locale.forLanguageTag("vi-VN"));
         List<String> warnings = new ArrayList<>();
@@ -148,6 +149,78 @@ public class TemplateProfileService {
                 List.copyOf(uncertainCells),
                 List.copyOf(uncertainRanges),
                 dataRow,
+                markers,
+                warnings
+        );
+    }
+
+    /*
+     * MAIN sheets (e.g. "141", "159") hold two forms stacked in one sheet: "PHIẾU YÊU CẦU
+     * NGHIỆM THU CÔNG VIỆC XÂY DỰNG" followed by "BIÊN BẢN ... NGHIỆM THU CÔNG VIỆC XÂY DỰNG".
+     * Addresses below were verified identical across 4 independent MAIN sheets in the current
+     * workbook (141, 159, 185, 120); validateRowMarker still guards against silent drift.
+     */
+    private static final String MAIN_YCNT_TITLE_NEEDLE = "phieu yeu cau nghiem thu";
+    private static final String MAIN_NTCV_TITLE_NEEDLE = "bien ban so";
+    private static final String MAIN_REQUEST_NUMBER_CELL = "G9";
+    private static final String MAIN_ACCEPTANCE_NUMBER_CELL = "H44";
+    private static final String MAIN_CONTENT_CELL_FORM1 = "B17";
+    private static final String MAIN_CONTENT_CELL_FORM2 = "B52";
+    private static final String MAIN_LOCATION_CELL_FORM1 = "D19";
+    private static final String MAIN_LOCATION_CELL_FORM2 = "D54";
+    private static final String MAIN_DATE_CELL_FORM1 = "J7";
+    private static final String MAIN_DATE_CELL_FORM1B = "F29";
+    private static final String MAIN_DATE_CELL_FORM2 = "I43";
+    private static final String MAIN_PROJECT_NAME_CELL_FORM2 = "E47";
+    private static final String MAIN_PACKAGE_NAME_CELL_FORM2 = "E48";
+    private static final String MAIN_PROJECT_LOCATION_CELL_FORM2 = "E49";
+    private static final String MAIN_CONTRACTOR_CELL_FORM2 = "A42";
+
+    private TemplateProfile resolveMain(Sheet sheet) {
+        DataFormatter formatter = new DataFormatter(Locale.forLanguageTag("vi-VN"));
+        List<String> warnings = new ArrayList<>();
+        List<String> markers = new ArrayList<>();
+
+        int titleRow = findRowContaining(sheet, MAIN_YCNT_TITLE_NEEDLE, 0, Math.min(sheet.getLastRowNum(), 15), formatter);
+        if (titleRow < 0) throw incompatible(sheet, "không tìm thấy tiêu đề " + MAIN_YCNT_TITLE_NEEDLE);
+        markers.add(MAIN_YCNT_TITLE_NEEDLE + "@" + (titleRow + 1));
+        validateRowMarker(sheet, titleRow + 1, List.of("so:"), "số phiếu yêu cầu", formatter);
+        validateRowMarker(sheet, titleRow + 3, List.of("du an"), "dự án (phiếu)", formatter);
+        validateRowMarker(sheet, titleRow + 7, List.of("doi tuong nghiem thu"), "đối tượng nghiệm thu (phiếu)", formatter);
+        validateRowMarker(sheet, titleRow + 11, List.of("vi tri"), "vị trí (phiếu)", formatter);
+
+        int recordRow = findRowContaining(sheet, MAIN_NTCV_TITLE_NEEDLE, titleRow + 20,
+                Math.min(sheet.getLastRowNum(), titleRow + 60), formatter);
+        if (recordRow < 0) throw incompatible(sheet, "không tìm thấy tiêu đề " + MAIN_NTCV_TITLE_NEEDLE);
+        markers.add(MAIN_NTCV_TITLE_NEEDLE + "@" + (recordRow + 1));
+        validateRowMarker(sheet, recordRow + 3, List.of("du an"), "dự án (biên bản)", formatter);
+        validateRowMarker(sheet, recordRow + 7, List.of("doi tuong nghiem thu"), "đối tượng nghiệm thu (biên bản)", formatter);
+        validateRowMarker(sheet, recordRow + 10, List.of("vi tri"), "vị trí (biên bản)", formatter);
+
+        Map<String, List<String>> targets = new LinkedHashMap<>();
+        targets.put("itemNumber", List.of(ITEM_NUMBER_CELL));
+        targets.put("workContent", List.of(MAIN_CONTENT_CELL_FORM1, MAIN_CONTENT_CELL_FORM2));
+        targets.put("location", List.of(MAIN_LOCATION_CELL_FORM1, MAIN_LOCATION_CELL_FORM2));
+        targets.put("acceptanceDateTime", List.of(MAIN_DATE_CELL_FORM1, MAIN_DATE_CELL_FORM1B, MAIN_DATE_CELL_FORM2));
+        targets.put("acceptanceNumber", List.of(MAIN_ACCEPTANCE_NUMBER_CELL));
+        targets.put("requestNumber", List.of(MAIN_REQUEST_NUMBER_CELL));
+        targets.put("projectName", List.of(PROJECT_NAME_CELLS.get(0), MAIN_PROJECT_NAME_CELL_FORM2));
+        targets.put("packageName", List.of(PACKAGE_NAME_CELLS.get(0), MAIN_PACKAGE_NAME_CELL_FORM2));
+        targets.put("projectLocation", List.of(PROJECT_LOCATION_CELLS.get(0), MAIN_PROJECT_LOCATION_CELL_FORM2));
+        targets.put("contractor", List.of(CONTRACTOR_CELLS.get(0), MAIN_CONTRACTOR_CELL_FORM2));
+
+        Set<String> variableCells = new LinkedHashSet<>();
+        targets.values().forEach(variableCells::addAll);
+
+        return new TemplateProfile(
+                MaterialFamily.UNKNOWN,
+                DocumentType.MAIN,
+                sheet.getSheetName(),
+                targets,
+                List.copyOf(variableCells),
+                List.of(),
+                List.of(),
+                -1,
                 markers,
                 warnings
         );
