@@ -42,7 +42,12 @@ public class TemplateRegistryService {
             ParsedSheetName parsed = sheetNameParser.parse(sheet.getSheetName()).orElse(null);
             if (parsed == null) continue;
             if (parsed.mainSheet()) {
-                mainCandidates.add(inspectMainSheet(workbook, sheet, index));
+                MainCandidate candidate = inspectMainSheet(sheet, index, workbook);
+                mainCandidates.add(candidate);
+                // BUG ĐÃ SỬA: trước đây chỉ lưu boolean "profileResolvable" mà không lưu chính TemplateProfile
+                // đã resolve được vào map profiles, khiến profileFor(sheetName) luôn trả về null cho MỌI
+                // sheet MAIN dù mainTemplates() đã liệt kê đúng — nên MAIN luôn báo "thiếu template" giả.
+                if (candidate.profile() != null) profiles.put(sheet.getSheetName(), candidate.profile());
                 continue;
             }
             if (parsed.materialFamily() == MaterialFamily.UNKNOWN) continue;
@@ -73,7 +78,7 @@ public class TemplateRegistryService {
         }
 
         List<String> mainTemplates = mainCandidates.stream()
-                .filter(candidate -> candidate.profileResolvable)
+                .filter(candidate -> candidate.profile() != null)
                 .sorted(Comparator.comparingInt((MainCandidate candidate) -> candidate.score).reversed()
                         .thenComparing(candidate -> candidate.sheetName))
                 .map(candidate -> candidate.sheetName)
@@ -82,25 +87,24 @@ public class TemplateRegistryService {
     }
 
     /** Kiểm tra 1 sheet MAIN có đủ điều kiện làm layout nguồn để clone không (profile đọc được + có in ấn/merge hợp lý). */
-    private MainCandidate inspectMainSheet(Workbook workbook, Sheet sheet, int index) {
-        boolean profileResolvable;
+    private MainCandidate inspectMainSheet(Sheet sheet, int index, Workbook workbook) {
+        TemplateProfile profile;
         try {
-            profileService.resolve(sheet, MaterialFamily.UNKNOWN, DocumentType.MAIN);
-            profileResolvable = true;
+            profile = profileService.resolve(sheet, MaterialFamily.UNKNOWN, DocumentType.MAIN);
         } catch (RuntimeException exception) {
             // Bắt rộng RuntimeException (không chỉ ApiException) để 1 sheet MAIN dị dạng/lỗi bất ngờ
             // không bao giờ làm hỏng cả vòng quét template của các sheet khác (LM/GM/MAIN còn lại).
-            profileResolvable = false;
+            profile = null;
         }
         String printArea = workbook.getPrintArea(index);
-        int score = (profileResolvable ? 10_000 : 0)
+        int score = (profile != null ? 10_000 : 0)
                 + (printArea != null && !printArea.isBlank() ? 1_000 : 0)
                 + sheet.getNumMergedRegions()
                 + drawingCount(sheet) * 100;
-        return new MainCandidate(sheet.getSheetName(), profileResolvable, score);
+        return new MainCandidate(sheet.getSheetName(), profile, score);
     }
 
-    private record MainCandidate(String sheetName, boolean profileResolvable, int score) {
+    private record MainCandidate(String sheetName, TemplateProfile profile, int score) {
     }
 
     private CandidateSheet inspectSheet(Workbook workbook, Sheet sheet, int index, ParsedSheetName parsed) {
