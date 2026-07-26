@@ -52,32 +52,65 @@ public class OutputSheetService {
 
         MaterialFamily family = resolveRequestedFamily(item, requestedFamily);
         List<OutputSheetDto> outputs = new ArrayList<>();
-        if (item.mainPlan() != null && item.mainPlan().availability() == OutputAvailability.EXISTING) {
-            outputs.add(existingOutput(item.mainPlan(), itemNumber, item.materialFamily()));
-        } else if (item.mainPlan() != null && item.mainPlan().availability() == OutputAvailability.GENERATABLE) {
-            outputs.add(mainOutput(item.mainPlan(), itemNumber));
-        }
+        outputs.add(mainOutput(job, item));
         outputs.add(sampleOutput(job, item, DocumentType.LM, family, requestedLmTemplate));
         outputs.add(sampleOutput(job, item, DocumentType.GM, family, requestedGmTemplate));
         return outputs.stream().filter(java.util.Objects::nonNull).toList();
     }
 
-    private OutputSheetDto mainOutput(DocumentPlanDto plan, String itemNumber) {
+    /**
+     * Luôn tính lại trực tiếp từ job.templateRegistry() tại thời điểm gọi (giống cách sampleOutput() làm
+     * cho LM/GM), thay vì chỉ dựa vào item.mainPlan() đã cache lúc phân tích — tránh trường hợp giá trị
+     * cache bị lệch. Nếu không có sheet MAIN nào đủ điều kiện làm layout, vẫn trả về 1 thẻ MISSING_TEMPLATE
+     * kèm cảnh báo rõ ràng thay vì bỏ qua hoàn toàn (trước đây bị bỏ qua âm thầm, không hiện gì cả).
+     */
+    private OutputSheetDto mainOutput(JobContext job, WorkItemDto item) {
+        DocumentPlanDto existingPlan = item.mainPlan();
+        if (existingPlan != null && existingPlan.availability() == OutputAvailability.EXISTING) {
+            return existingOutput(existingPlan, item.itemNumber(), item.materialFamily());
+        }
+        String itemNumber = item.itemNumber();
+        List<String> availableTemplates = job.templateRegistry().mainTemplates();
+        String plannedName = sheetNameParser.plannedSheetName(DocumentType.MAIN, MaterialFamily.UNKNOWN, itemNumber);
+        String sourceTemplate = job.templateRegistry().bestMainTemplate();
+        TemplateProfile profile = sourceTemplate == null ? null : job.templateRegistry().profileFor(sourceTemplate);
+        if (sourceTemplate == null || profile == null) {
+            String warning = "Không có sheet MAIN nào trong workbook đủ điều kiện làm layout nguồn"
+                    + " (đã quét toàn bộ sheet dạng số, " + availableTemplates.size() + " sheet khả dụng).";
+            return new OutputSheetDto(
+                    plannedName,
+                    "Biểu mẫu chính — thiếu template",
+                    DocumentType.MAIN.name(),
+                    DocumentType.MAIN,
+                    warning,
+                    false,
+                    true,
+                    null,
+                    availableTemplates,
+                    null,
+                    OutputAvailability.MISSING_TEMPLATE,
+                    MaterialFamily.UNKNOWN,
+                    List.of(),
+                    List.of(warning)
+            );
+        }
+        List<FieldDecisionDto> decisions = fieldDecisionService.decisions(item, job.project(), profile, DocumentType.MAIN);
+        List<String> warnings = new ArrayList<>(profile.warnings());
         return new OutputSheetDto(
-                plan.plannedSheetName(),
-                "Biểu mẫu chính — sẽ tạo từ " + plan.sourceTemplate(),
+                plannedName,
+                "Biểu mẫu chính — sẽ tạo từ " + sourceTemplate,
                 DocumentType.MAIN.name(),
                 DocumentType.MAIN,
-                "Tạo mới từ layout " + plan.sourceTemplate() + "; chỉ điền dữ liệu CERTAIN — hồ sơ chính cho DM " + itemNumber,
+                "Tạo mới từ layout " + sourceTemplate + "; chỉ điền dữ liệu CERTAIN — hồ sơ chính cho DM " + itemNumber,
                 true,
                 true,
-                plan.sourceTemplate(),
-                plan.availableSourceTemplates(),
+                sourceTemplate,
+                availableTemplates,
                 GenerationMode.CLONE_TEMPLATE,
                 OutputAvailability.GENERATABLE,
                 MaterialFamily.UNKNOWN,
-                plan.fieldDecisions(),
-                plan.warnings()
+                decisions,
+                List.copyOf(new java.util.LinkedHashSet<>(warnings))
         );
     }
 

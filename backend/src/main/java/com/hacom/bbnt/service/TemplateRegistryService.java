@@ -87,7 +87,9 @@ public class TemplateRegistryService {
         try {
             profileService.resolve(sheet, MaterialFamily.UNKNOWN, DocumentType.MAIN);
             profileResolvable = true;
-        } catch (ApiException exception) {
+        } catch (RuntimeException exception) {
+            // Bắt rộng RuntimeException (không chỉ ApiException) để 1 sheet MAIN dị dạng/lỗi bất ngờ
+            // không bao giờ làm hỏng cả vòng quét template của các sheet khác (LM/GM/MAIN còn lại).
             profileResolvable = false;
         }
         String printArea = workbook.getPrintArea(index);
